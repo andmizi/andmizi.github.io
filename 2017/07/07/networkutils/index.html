@@ -1,0 +1,199 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+  <meta charset="utf-8">
+  
+  <title>网络请求框架封装(NetWorkUtils) | kimi | 个人博客</title>
+
+  
+  <meta name="author" content="kimi">
+  
+
+  
+  <meta name="description" content="Here We Are Again">
+  
+
+  
+  
+  <meta name="keywords" content="安卓,网络,OkHttp">
+  
+
+  <meta id="viewport" name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, minimum-scale=1, user-scalable=no, minimal-ui">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black">
+
+  <meta property="og:title" content="网络请求框架封装(NetWorkUtils)"/>
+
+  <meta property="og:site_name" content="kimi"/>
+
+  
+  <meta property="og:image" content="/favicon.ico"/>
+  
+
+  <link href="/favicon.ico" rel="icon">
+  <link rel="alternate" href="/atom.xml" title="kimi" type="application/atom+xml">
+  <link rel="stylesheet" href="/css/style.css" media="screen" type="text/css">
+</head>
+
+
+<body>
+<div class="blog">
+  <div class="content">
+
+    <header>
+  <div class="site-branding">
+    <h1 class="site-title">
+      <a href="/">kimi</a>
+    </h1>
+    <p class="site-description">个人博客</p>
+  </div>
+  <nav class="site-navigation">
+    <ul>
+      
+        <li><a href="/">主页</a></li>
+      
+        <li><a href="/archives">归档</a></li>
+      
+        <li><a href="/about">关于我</a></li>
+      
+    </ul>
+  </nav>
+</header>
+
+    <main class="site-main posts-loop">
+    <article>
+
+  
+    
+    <h3 class="article-title"><span>网络请求框架封装(NetWorkUtils)</span></h3>
+    
+  
+
+  <div class="article-top-meta">
+    <span class="posted-on">
+      <a href="/2017/07/07/networkutils/" rel="bookmark">
+        <time class="entry-date published" datetime="2017-07-07T07:10:04.000Z">
+          2017-07-07
+        </time>
+      </a>
+    </span>
+  </div>
+
+
+  
+
+  <div class="article-content">
+    <div class="entry">
+      
+        <p>网络请求在app开发中占据很重要的角色，也算是核心技术要点之一。github上也有很多著名的开源库，如Xutils，AsyncHttpClient，Okhttp等等。我相信很多人如同我一样，习惯性的拿这些开源的加入到自己的项目中，但当有一天，因为某些原因我们需要对网络层进行一次切换，那么是不是问题就变的严重了，我们需要改大量的代码来满足这次更改。为了避免这样的问题发生，我们需要对网络层进行二次包装一下；</p>
+<a id="more"></a>
+<p>效果图：</p>
+<p><img src="http://upload-images.jianshu.io/upload_images/2756952-3d0857d4a44739d4.gif?imageMogr2/auto-orient/strip" alt="NetWorkUtils.gif"></p>
+<h4 id="项目描述："><a href="#项目描述：" class="headerlink" title="项目描述："></a>项目描述：</h4><p> 网络请求框架二次封装，目前完成了基于OkHttp的get/post/postJson/uploadFile/downloadFile等功能开发，支持扩展，底层实现可自由切换；</p>
+<ul>
+<li>扩展请继承ExecutorFactory实现具体的IExecutor即可，底层可以是OkHttp，也可以是HttpClient或者URLConnection；</li>
+</ul>
+<p>使用方式：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div><div class="line">43</div><div class="line">44</div><div class="line">45</div><div class="line">46</div><div class="line">47</div><div class="line">48</div><div class="line">49</div><div class="line">50</div><div class="line">51</div><div class="line">52</div><div class="line">53</div><div class="line">54</div><div class="line">55</div><div class="line">56</div><div class="line">57</div><div class="line">58</div><div class="line">59</div><div class="line">60</div><div class="line">61</div><div class="line">62</div><div class="line">63</div><div class="line">64</div><div class="line">65</div><div class="line">66</div><div class="line">67</div><div class="line">68</div><div class="line">69</div><div class="line">70</div><div class="line">71</div><div class="line">72</div><div class="line">73</div><div class="line">74</div><div class="line">75</div><div class="line">76</div><div class="line">77</div><div class="line">78</div><div class="line">79</div><div class="line">80</div><div class="line">81</div><div class="line">82</div><div class="line">83</div><div class="line">84</div><div class="line">85</div><div class="line">86</div><div class="line">87</div><div class="line">88</div><div class="line">89</div><div class="line">90</div><div class="line">91</div><div class="line">92</div><div class="line">93</div></pre></td><td class="code"><pre><div class="line">public class MyApplication extends Application &#123;</div><div class="line"></div><div class="line">    @Override</div><div class="line">    public void onCreate() &#123;</div><div class="line">        super.onCreate();</div><div class="line">		//在程序入口进行工厂初始化，默认的为okhttp的实现工厂</div><div class="line">        NetWorkUtils.init(new OkHttpExecutorFactory());</div><div class="line">    &#125;</div><div class="line">&#125;</div><div class="line"></div><div class="line">//get方式请求</div><div class="line">private void doGet() &#123;</div><div class="line">       String url = &quot;http://127.0.0.1:8080/test/test&quot;;</div><div class="line">       RequestParams params = new RequestParams.Builder().url(url).method(Method.GET).params(&quot;key1&quot;, &quot;hello&quot;).params(&quot;key2&quot;, &quot;doGet&quot;).tag(this).build();</div><div class="line">       NetWorkUtils.getInstance().doStart(params, callback);</div><div class="line">   &#125;</div><div class="line"></div><div class="line">//post方式请求</div><div class="line">   private void doPost() &#123;</div><div class="line">       String url = &quot;http://127.0.0.1:8080/test/test&quot;;</div><div class="line">       RequestParams params = new RequestParams.Builder().url(url).method(Method.POST).params(&quot;key1&quot;, &quot;hello&quot;).params(&quot;key2&quot;, &quot;doPost&quot;).tag(this).build();</div><div class="line">       NetWorkUtils.getInstance().doStart(params, callback);</div><div class="line">   &#125;</div><div class="line"></div><div class="line">//postJson方式请求</div><div class="line">   private void doPostJson() &#123;</div><div class="line">       String url = &quot;http://127.0.0.1:8080/test/test&quot;;</div><div class="line">       String body = &quot;&#123; \&quot;key1\&quot;:\&quot;hello\&quot;,\&quot;key2\&quot;:\&quot;doPostJson\&quot; &#125;&quot;;</div><div class="line">       RequestParams params = new RequestParams.Builder().url(url).method(Method.POST_JSON).body(body).tag(this).build();</div><div class="line">       NetWorkUtils.getInstance().doStart(params, callback);</div><div class="line">   &#125;</div><div class="line"></div><div class="line">//文件上传</div><div class="line">   private void doUploadFile() &#123;</div><div class="line">       String url = &quot;http://127.0.0.1:8080/test/upload&quot;;</div><div class="line">       String filePath = Environment.getExternalStorageDirectory().getPath() + File.separator + &quot;atlas-master.zip&quot;;</div><div class="line">       RequestParams params = new RequestParams.Builder().url(url).method(Method.UPLOAD).files(&quot;fileKey&quot;, new File(filePath)).tag(this).build();</div><div class="line">       NetWorkUtils.getInstance().doStart(params, callback);</div><div class="line">   &#125;</div><div class="line"></div><div class="line">//文件下载</div><div class="line">   private void doDownload() &#123;</div><div class="line">       String url = &quot;http://127.0.0.1:8080/test/download&quot;;</div><div class="line">       String filePath = Environment.getExternalStorageDirectory().getPath() + File.separator + &quot;atlas-master.zip&quot;;</div><div class="line">       RequestParams params = new RequestParams.Builder().url(url).method(Method.DOWNLOAD).downLoadFilePath(filePath).tag(this).build();</div><div class="line">       NetWorkUtils.getInstance().doStart(params, callback);</div><div class="line">   &#125;</div><div class="line"></div><div class="line">//请求回调，主线程中进行</div><div class="line">	private ICallBack callback = new ICallBack() &#123;</div><div class="line"></div><div class="line">       @Override</div><div class="line">       public void onStart() &#123;</div><div class="line">           Log.d(NetWorkUtils.class.getSimpleName(), &quot;网络开始加载&quot;);</div><div class="line">       &#125;</div><div class="line"></div><div class="line">       @Override</div><div class="line">       public void onComplite() &#123;</div><div class="line">           Log.d(NetWorkUtils.class.getSimpleName(), &quot;网络加载完成&quot;);</div><div class="line">       &#125;</div><div class="line"></div><div class="line">       @Override</div><div class="line">       public void onError(Exception e) &#123;</div><div class="line">           Log.d(NetWorkUtils.class.getSimpleName(), &quot;出现错误&quot;);</div><div class="line">       &#125;</div><div class="line"></div><div class="line"></div><div class="line">       @Override</div><div class="line">       public void onSuccess(Object tag, String result) &#123;</div><div class="line"></div><div class="line">		Log.d(NetWorkUtils.class.getSimpleName(), &quot;result = &quot;+result);</div><div class="line">           /**</div><div class="line">            * 可以根据不同的tag来解析数据</div><div class="line">            * if(tag.equest(&quot;doGet&quot;))&#123;</div><div class="line">            *</div><div class="line">            * &#125;else if(tag.equest(&quot;doPost&quot;))&#123;</div><div class="line">            *</div><div class="line">            * &#125;</div><div class="line">            * ............</div><div class="line">            */</div><div class="line">       &#125;</div><div class="line"></div><div class="line">       @Override</div><div class="line">       public void onProgress(float progress) &#123;</div><div class="line">           Log.d(NetWorkUtils.class.getSimpleName(), &quot;上传或下载进度 : &quot;+progress);</div><div class="line">       &#125;</div><div class="line">   &#125;;</div><div class="line"></div><div class="line">//支持根据tag来取消具体的网络请求</div><div class="line">	protected void onDestroy() &#123;</div><div class="line">       NetWorkUtils.getInstance().cancleRequest(this);</div><div class="line">       super.onDestroy();</div><div class="line">   &#125;</div></pre></td></tr></table></figure>
+<h4 id="技术要点："><a href="#技术要点：" class="headerlink" title="技术要点："></a>技术要点：</h4><ul>
+<li>抽象工厂模式</li>
+<li>构建者模式</li>
+<li>OkHttp使用</li>
+<li>OkHttp上传与下载的进度监听</li>
+<li>线程回调</li>
+</ul>
+<h4 id="项目结构："><a href="#项目结构：" class="headerlink" title="项目结构："></a>项目结构：</h4><p><img src="http://upload-images.jianshu.io/upload_images/2756952-fb4259fcff0cab84.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="image.png"></p>
+<ul>
+<li>IExecutor 网络请求接口类，定义了get/post/postJson/uploadFile/downloadFile等；</li>
+<li>ExecutorFactory IExecutor的创建工厂，抽象类；</li>
+<li>OkHttpExecutor 实现了IExecutor的接口，实现了具体的get/post/postJson/uploadFile/downloadFile等方法；</li>
+<li>OkHttpExecutorFactory 实现了ExecutorFactory，并返回了OkHttpExecutor实例;</li>
+<li>MainHandler UI线程回调；</li>
+<li>RequestParams 请求参数，采用构建者模式；</li>
+<li>NetWorkUtils 网络请求工具类，单利，全局唯一 ;</li>
+</ul>
+<p>注意：默认的okhttp enqueue（call）后，是回调在子线成中的；</p>
+<h4 id="执行流程，代码分析："><a href="#执行流程，代码分析：" class="headerlink" title="执行流程，代码分析："></a>执行流程，代码分析：</h4><ul>
+<li>NetWorkUtils.init(new OkHttpExecutorFactory()) 后发生了什么？</li>
+</ul>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div></pre></td><td class="code"><pre><div class="line">public static IExecutor executor;</div><div class="line">   public static NetWorkUtils mInstance;</div><div class="line">	</div><div class="line">   private NetWorkUtils(ExecutorFactory factory) &#123;</div><div class="line">       executor = factory.create();</div><div class="line">   &#125;</div><div class="line">	</div><div class="line">   /**</div><div class="line">    * init networkutils</div><div class="line">    * 设置底层使用哪种网络实现，目前只实现了OkHttpExecutorFactory，如果想扩展的话请继承ExecutorFactory自行实现</div><div class="line">    * @param factory</div><div class="line">    */</div><div class="line">   public static void init(ExecutorFactory factory) &#123;</div><div class="line">       if (mInstance == null) &#123;</div><div class="line">           synchronized (NetWorkUtils.class) &#123;</div><div class="line">               if (mInstance == null) &#123;</div><div class="line">                   mInstance = new NetWorkUtils(factory);</div><div class="line">               &#125;</div><div class="line">           &#125;</div><div class="line">       &#125;</div><div class="line">   &#125;</div></pre></td></tr></table></figure>
+<p>我们看到进行了NetWorkUtils单利的初始化，并通过工厂获取到了IExecutor的具体实现类；</p>
+<ul>
+<li>OkHttpExecutorFactory继承自ExecutorFactory，并实现了create抽象方法：</li>
+</ul>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div></pre></td><td class="code"><pre><div class="line">public class OkHttpExecutorFactory extends ExecutorFactory &#123;</div><div class="line">	</div><div class="line">   @Override</div><div class="line">   public IExecutor create() &#123;</div><div class="line">	</div><div class="line">       HttpLoggingInterceptor httpLoggingInterceptor = new HttpLoggingInterceptor(new HttpLoggingInterceptor.Logger() &#123;</div><div class="line">           @Override</div><div class="line">           public void log(String message) &#123;</div><div class="line">               Log.d(NetWorkUtils.class.getSimpleName(), message);</div><div class="line">           &#125;</div><div class="line">       &#125;);</div><div class="line">	</div><div class="line">       //建造者模式，生成配置对象</div><div class="line">       OkhttpConfig config = new OkhttpConfig.Builder().retryOnConnectionFailure(false).connectTimeout(10000).readTimeout(5000).writeTimeout(5000).interceptors(httpLoggingInterceptor).build();</div><div class="line">	</div><div class="line">       return new OkHttpExecutor(config);</div><div class="line">   &#125;</div></pre></td></tr></table></figure>
+<p>通过OkhttpConfig构建者创建了OkHttpExecutor 并返回；</p>
+<ul>
+<li>OkHttpExecutor实现了IExecutor接口并实现了接口中所有的方法，所以这个才是具体的网络请求实现：</li>
+</ul>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div><div class="line">43</div><div class="line">44</div><div class="line">45</div><div class="line">46</div><div class="line">47</div></pre></td><td class="code"><pre><div class="line">public static OkHttpClient mClient;</div><div class="line">  	public static final Map&lt;Object, ArrayList&lt;Call&gt;&gt; calls = new HashMap&lt;&gt;();</div><div class="line"></div><div class="line">  	public OkHttpExecutor(OkhttpConfig config) &#123;</div><div class="line"></div><div class="line">       //配置okhttpclient，全局唯一</div><div class="line">       OkHttpClient.Builder builder = new OkHttpClient.Builder().retryOnConnectionFailure(config.retryOnConnectionFailure).connectTimeout(config.connectTimeout, TimeUnit.MILLISECONDS)</div><div class="line">               .readTimeout(config.readTimeout, TimeUnit.MILLISECONDS).writeTimeout(config.writeTimeout, TimeUnit.MILLISECONDS);</div><div class="line">       if (config.cache != null) &#123;</div><div class="line">           builder.cache(config.cache);</div><div class="line">       &#125;</div><div class="line">	</div><div class="line">       if (config.x509TrustManager != null &amp;&amp; config.sslSocketFactory != null) &#123;</div><div class="line">           builder.sslSocketFactory(config.sslSocketFactory, config.x509TrustManager);</div><div class="line">       &#125;</div><div class="line">       if (config.interceptors != null &amp;&amp; config.interceptors.size() &gt; 0) &#123;</div><div class="line">           for (int i = 0; i &lt; config.interceptors.size(); i++) &#123;</div><div class="line">               builder.addInterceptor(config.interceptors.get(i));</div><div class="line">           &#125;</div><div class="line">       &#125;</div><div class="line">	</div><div class="line">       if (config.networkInterceptors != null &amp;&amp; config.networkInterceptors.size() &gt; 0) &#123;</div><div class="line">           for (int i = 0; i &lt; config.networkInterceptors.size(); i++) &#123;</div><div class="line">               builder.addNetworkInterceptor(config.networkInterceptors.get(i));</div><div class="line">           &#125;</div><div class="line">       &#125;</div><div class="line">	</div><div class="line">       mClient = builder.build();</div><div class="line"> 		&#125;</div><div class="line">	</div><div class="line">  	@Override</div><div class="line"> 		public void doGet(RequestParams requestParams, ICallBack callback) &#123;</div><div class="line">       callback.onStart();</div><div class="line">       Request request = new Request.Builder().url(OkhttpUtils.getUrlWithParams(requestParams)).get().headers(OkhttpUtils.getHeaders(requestParams)).tag(requestParams.tag).build();</div><div class="line">       Call call = mClient.newCall(request);</div><div class="line">       call.enqueue(new OkhttpCallback(requestParams));</div><div class="line">       cacheCall(requestParams, call);</div><div class="line">  	&#125;</div><div class="line"></div><div class="line">  	@Override</div><div class="line">  		public void doPost(RequestParams requestParams, ICallBack callback) &#123;</div><div class="line">       callback.onStart();</div><div class="line">       Request request = new Request.Builder().url(requestParams.url).post(OkhttpUtils.getPostBody(requestParams)).headers(OkhttpUtils.getHeaders(requestParams)).tag(requestParams.tag).build();</div><div class="line">       Call call = mClient.newCall(request);</div><div class="line">       call.enqueue(new OkhttpCallback(requestParams));</div><div class="line">       cacheCall(requestParams, call);</div><div class="line">  	&#125;</div></pre></td></tr></table></figure>
+<h5 id="部分代码，具体的请查看源码；"><a href="#部分代码，具体的请查看源码；" class="headerlink" title="部分代码，具体的请查看源码；"></a>部分代码，具体的请查看源码；</h5><p>在构造器中，我们通过OkhttpConfig实例化了一个OkHttpClient，并在doGet，doPost中使用OkHttpClient进行具体的网络请求，如果对okhttp不熟悉的同学，可以百度先学习下okhttp；</p>
+<p>注意，ICallBack是我们自定义的callback，因为前面我提到过okhttp的回调是在子线成中进行的，所以我们有必要把它变为UI线程回调；<br>OkhttpCallback这个是我们继承自okhttp的Callback，然后在里面进行UI线程的切换，最后在回调到我们自己的ICallBack的；</p>
+<ul>
+<li>OkhttpCallback 继承自okhttp的Callback：</li>
+</ul>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div></pre></td><td class="code"><pre><div class="line">public class OkhttpCallback implements Callback &#123;</div><div class="line">	</div><div class="line">    public static final Handler handler = new MainHandler(Looper.getMainLooper());</div><div class="line"></div><div class="line">    RequestParams requestParams;</div><div class="line"></div><div class="line">    public OkhttpCallback(RequestParams requestParams) &#123;</div><div class="line">        this.requestParams = requestParams;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    @Override</div><div class="line">    public void onFailure(Call call, IOException e) &#123;</div><div class="line">        e.printStackTrace();</div><div class="line">        TempleteBean templeteBean = new TempleteBean();</div><div class="line">        templeteBean.call = call;</div><div class="line">        templeteBean.e = e;</div><div class="line">        templeteBean.requestParams = requestParams;</div><div class="line">        Message.obtain(handler, MainHandler.FAILD, templeteBean).sendToTarget();</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    @Override</div><div class="line">    public void onResponse(Call call, Response response) throws IOException &#123;</div><div class="line">        TempleteBean templeteBean = new TempleteBean();</div><div class="line">        templeteBean.call = call;</div><div class="line">        templeteBean.response = response;</div><div class="line">        templeteBean.requestParams = requestParams;</div><div class="line"></div><div class="line">        //downloadfile</div><div class="line">        if (requestParams.method.equals(Method.DOWNLOAD)) &#123;</div><div class="line">            downLoadFile(templeteBean, response);</div><div class="line">        &#125;</div><div class="line"></div><div class="line">        Message.obtain(handler, MainHandler.SUCCESS, templeteBean).sendToTarget();</div><div class="line">    &#125;</div><div class="line">｝</div></pre></td></tr></table></figure>
+<p>我们使用了TempleteBean进行数据的封装，并通过MainHandler发送到了UI线程中；<br>new MainHandler(Looper.getMainLooper()) 传入UI线程的looper即可回调在UI线程中；</p>
+<ul>
+<li>MainHandler 继承自安卓系统中的Handler：</li>
+</ul>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div><div class="line">43</div><div class="line">44</div><div class="line">45</div><div class="line">46</div><div class="line">47</div><div class="line">48</div><div class="line">49</div><div class="line">50</div><div class="line">51</div><div class="line">52</div><div class="line">53</div></pre></td><td class="code"><pre><div class="line">public class MainHandler extends Handler &#123;</div><div class="line">	</div><div class="line">    public static final int SUCCESS = 101;</div><div class="line">    public static final int FAILD = 102;</div><div class="line">    public static final int PROGRESS = 103;</div><div class="line"></div><div class="line">    public MainHandler(Looper looper) &#123;</div><div class="line">        super(looper);</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    @Override</div><div class="line">    public void handleMessage(Message msg) &#123;</div><div class="line">        switch (msg.what) &#123;</div><div class="line">            case SUCCESS:</div><div class="line">                onSuccess(msg);</div><div class="line">                break;</div><div class="line">            case FAILD:</div><div class="line">                onFaild(msg);</div><div class="line">                break;</div><div class="line">            case PROGRESS:</div><div class="line">                onProgress(msg);</div><div class="line">                break;</div><div class="line">        &#125;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">	private void onSuccess(Message msg) &#123;</div><div class="line">        TempleteBean bean = (TempleteBean) msg.obj;</div><div class="line">        RequestParams requestParams = bean.requestParams;</div><div class="line">        ICallBack callback = requestParams.callback;</div><div class="line">        Response response = bean.response;</div><div class="line"></div><div class="line">        if (!response.isSuccessful()) &#123;</div><div class="line">            Log.d(NetWorkUtils.class.getSimpleName(), &quot;!response.isSuccessful()&quot; +response.code());</div><div class="line">            return;</div><div class="line">        &#125;</div><div class="line"></div><div class="line">        if (requestParams.method.equals(Method.DOWNLOAD)) &#123;</div><div class="line">            callback.onSuccess(requestParams.tag, requestParams.downLoadFilePath);</div><div class="line">            callback.onComplite();</div><div class="line">            return;</div><div class="line">        &#125;</div><div class="line"></div><div class="line">        try &#123;</div><div class="line">            String result = response.body().string();</div><div class="line">            Log.d(NetWorkUtils.class.getSimpleName(), result);</div><div class="line">            callback.onSuccess(requestParams.tag, result);</div><div class="line">        &#125; catch (Exception e) &#123;</div><div class="line">            e.printStackTrace();</div><div class="line">            callback.onError(e);</div><div class="line">        &#125;</div><div class="line">        callback.onComplite();</div><div class="line">    &#125;</div><div class="line">｝</div></pre></td></tr></table></figure>
+<p>执行结果最终会进入到这个handler中，而这个handler是UI线程的，所以我们通过TempleteBean 获取到数据，在将结果回调到我们自己定义地的callback中；</p>
+<p>至此，整个请求流程就完成了，然后我们回头看下NetWorkUtils；</p>
+<ul>
+<li>NetWorkUtils 请求工具类，也是单利的，全局唯一的，我们在程序入口init的时候进行了单利的初始化：</li>
+</ul>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div></pre></td><td class="code"><pre><div class="line">public void doStart(RequestParams params, ICallBack callBack) &#123;</div><div class="line">       if (params == null || callBack == null) return;</div><div class="line">       params.callback = callBack;</div><div class="line">       switch (params.method) &#123;</div><div class="line">           case GET:</div><div class="line">               executor.doGet(params, callBack);</div><div class="line">               break;</div><div class="line">           case POST:</div><div class="line">               executor.doPost(params, callBack);</div><div class="line">               break;</div><div class="line">           case POST_JSON:</div><div class="line">               executor.doPostJson(params, callBack);</div><div class="line">               break;</div><div class="line">           case UPLOAD:</div><div class="line">               executor.doUploadFile(params, callBack);</div><div class="line">               break;</div><div class="line">           case DOWNLOAD:</div><div class="line">               executor.doDownLoad(params, callBack);</div><div class="line">               break;</div><div class="line">       &#125;</div><div class="line">   &#125;</div></pre></td></tr></table></figure>
+<p>我们NetWorkUtils.getInstance().doStart(params，callback)即可发起网络请求；</p>
+<p>好了，介绍的差不多了，有问题的朋友欢迎交流，群里有个哥们说了一句话，每天不进步，就是退步。我们一起加油！</p>
+<h5 id="demo-源码，服务端代码都在github上-欢迎start-https-github-com-andmizi-NetWorkUtils"><a href="#demo-源码，服务端代码都在github上-欢迎start-https-github-com-andmizi-NetWorkUtils" class="headerlink" title="demo,源码，服务端代码都在github上,欢迎start https://github.com/andmizi/NetWorkUtils"></a>demo,源码，服务端代码都在github上,欢迎start <a href="https://github.com/andmizi/NetWorkUtils" target="_blank" rel="external">https://github.com/andmizi/NetWorkUtils</a></h5><h5 id="CSDN博客：http-blog-csdn-net-qq-28268507-article-details-71452729"><a href="#CSDN博客：http-blog-csdn-net-qq-28268507-article-details-71452729" class="headerlink" title="CSDN博客：http://blog.csdn.net/qq_28268507/article/details/71452729"></a>CSDN博客：<a href="http://blog.csdn.net/qq_28268507/article/details/71452729" target="_blank" rel="external">http://blog.csdn.net/qq_28268507/article/details/71452729</a></h5>
+      
+    </div>
+
+  </div>
+
+  <div class="article-footer">
+    <div class="article-meta pull-left">
+
+    
+      
+
+    <span class="post-categories">
+      <i class="icon-categories"></i>
+        <a href="/categories/android开发/">android开发</a>
+    </span>
+    
+
+    
+    
+
+    <span class="post-tags">
+      <i class="icon-tags"></i>
+        <a href="/tags/安卓/">安卓</a><a href="/tags/网络/">网络</a><a href="/tags/OkHttp/">OkHttp</a>
+    </span>
+    
+
+    </div>
+
+    
+  </div>
+</article>
+
+
+    </main>
+
+    <footer class="site-footer">
+  <p class="site-info">
+    Proudly powered by <a href="https://hexo.io/" target="_blank">Hexo</a> and
+    Theme by <a href="https://github.com/CodeDaraW/Hacker" target="_blank">Hacker</a>
+    </br>
+    
+    &copy; 2017 kimi
+    
+  </p>
+</footer>
+    
+  </div>
+</div>
+</body>
+</html>

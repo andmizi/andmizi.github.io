@@ -1,0 +1,159 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+  <meta charset="utf-8">
+  
+  <title>简单实现消息提示(小红点) | kimi | 个人博客</title>
+
+  
+  <meta name="author" content="kimi">
+  
+
+  
+  <meta name="description" content="Here We Are Again">
+  
+
+  
+  
+  <meta name="keywords" content="安卓,自定义view">
+  
+
+  <meta id="viewport" name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, minimum-scale=1, user-scalable=no, minimal-ui">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black">
+
+  <meta property="og:title" content="简单实现消息提示(小红点)"/>
+
+  <meta property="og:site_name" content="kimi"/>
+
+  
+  <meta property="og:image" content="/favicon.ico"/>
+  
+
+  <link href="/favicon.ico" rel="icon">
+  <link rel="alternate" href="/atom.xml" title="kimi" type="application/atom+xml">
+  <link rel="stylesheet" href="/css/style.css" media="screen" type="text/css">
+</head>
+
+
+<body>
+<div class="blog">
+  <div class="content">
+
+    <header>
+  <div class="site-branding">
+    <h1 class="site-title">
+      <a href="/">kimi</a>
+    </h1>
+    <p class="site-description">个人博客</p>
+  </div>
+  <nav class="site-navigation">
+    <ul>
+      
+        <li><a href="/">主页</a></li>
+      
+        <li><a href="/archives">归档</a></li>
+      
+        <li><a href="/about">关于我</a></li>
+      
+    </ul>
+  </nav>
+</header>
+
+    <main class="site-main posts-loop">
+    <article>
+
+  
+    
+    <h3 class="article-title"><span>简单实现消息提示(小红点)</span></h3>
+    
+  
+
+  <div class="article-top-meta">
+    <span class="posted-on">
+      <a href="/2017/07/07/smallredpoint/" rel="bookmark">
+        <time class="entry-date published" datetime="2017-07-07T07:10:04.000Z">
+          2017-07-07
+        </time>
+      </a>
+    </span>
+  </div>
+
+
+  
+
+  <div class="article-content">
+    <div class="entry">
+      
+        <p>最近有些忙，版本不断叠加，需求一个接一个。这不，其中有一个需求就是在原有的版本上显示一个红点提示，类似于qq未读消息一样，需求图如下：</p>
+<p><img src="http://upload-images.jianshu.io/upload_images/2756952-31834b0762778796.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="QQ截图20170421140930.png"></p>
+<p>没错，看起来好简单，可我们再看下设计师给我们切的图(设计师很周到哈，这里谢谢谢谢，嘿嘿)</p>
+<a id="more"></a>
+<p><img src="http://upload-images.jianshu.io/upload_images/2756952-dcdadbf1c2fb3365.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="QQ截图20170421141143.png"></p>
+<p>设计师是分不同状态来切的，如果我们按照这个思维去根据不同状态判断实现的话，不是不行，而是稍微麻烦了些。我们能不能尽量对以前代码做轻微的改动就能实现新的需求呢？当然是可以的了。看下以前代码是如何实现的：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div><div class="line">43</div><div class="line">44</div><div class="line">45</div><div class="line">46</div><div class="line">47</div><div class="line">48</div><div class="line">49</div><div class="line">50</div></pre></td><td class="code"><pre><div class="line">&lt;RadioGroup</div><div class="line">       android:id=&quot;@+id/bottom_radiogroup&quot;</div><div class="line">       android:layout_width=&quot;match_parent&quot;</div><div class="line">       android:layout_height=&quot;50dp&quot;</div><div class="line">       android:layout_marginTop=&quot;1px&quot;</div><div class="line">       android:background=&quot;@android:color/white&quot;</div><div class="line">       android:gravity=&quot;center_vertical&quot;</div><div class="line">       android:orientation=&quot;horizontal&quot;&gt;</div><div class="line"></div><div class="line">       &lt;RadioButton</div><div class="line">           android:id=&quot;@+id/home_index&quot;</div><div class="line">           android:layout_width=&quot;0dp&quot;</div><div class="line">           android:layout_height=&quot;wrap_content&quot;</div><div class="line">           android:layout_weight=&quot;1&quot;</div><div class="line">           android:button=&quot;@null&quot;</div><div class="line">           android:checked=&quot;true&quot;</div><div class="line">           android:drawablePadding=&quot;2dp&quot;</div><div class="line">           android:drawableTop=&quot;@drawable/home_index_select&quot;</div><div class="line">           android:gravity=&quot;center&quot;</div><div class="line">           android:text=&quot;首页&quot;</div><div class="line">           android:textColor=&quot;@color/home_select_color&quot;</div><div class="line">           android:textSize=&quot;11sp&quot; /&gt;</div><div class="line"></div><div class="line">       &lt;RadioButton</div><div class="line">           android:id=&quot;@+id/home_bx&quot;</div><div class="line">           android:layout_width=&quot;0dp&quot;</div><div class="line">           android:layout_height=&quot;wrap_content&quot;</div><div class="line">           android:layout_weight=&quot;1&quot;</div><div class="line">           android:button=&quot;@null&quot;</div><div class="line">           android:drawablePadding=&quot;2dp&quot;</div><div class="line">           android:drawableTop=&quot;@drawable/home_bx_select&quot;</div><div class="line">           android:gravity=&quot;center&quot;</div><div class="line">           android:text=&quot;保险&quot;</div><div class="line">           android:textColor=&quot;@color/home_select_color&quot;</div><div class="line">           android:textSize=&quot;11sp&quot; /&gt;</div><div class="line"></div><div class="line">       &lt;RadioButton</div><div class="line">           android:id=&quot;@+id/home_my&quot;</div><div class="line">           android:layout_width=&quot;0dp&quot;</div><div class="line">           android:layout_height=&quot;wrap_content&quot;</div><div class="line">           android:layout_weight=&quot;1&quot;</div><div class="line">           android:button=&quot;@null&quot;</div><div class="line">           android:drawablePadding=&quot;2dp&quot;</div><div class="line">           android:drawableTop=&quot;@drawable/home_my_select&quot;</div><div class="line">           android:gravity=&quot;center&quot;</div><div class="line">           android:text=&quot;我的&quot;</div><div class="line">           android:textColor=&quot;@color/home_select_color&quot;</div><div class="line">           android:textSize=&quot;11sp&quot; /&gt;</div><div class="line"></div><div class="line">   &lt;/RadioGroup&gt;</div></pre></td></tr></table></figure>
+<p>很简单，就一个RadioGroup 包含了三个RadioButton，我们都知道RadioGroup其实是继承Linearlayout的，所以这里让他的三个RadioButton平分，然后每个RadioButton在Gravity.Center居中显示即可，最后每个DrawableTop写一个selector就达到以前的需求了。</p>
+<p>现在来看下新的需求，怎么办？自定义View可以完美实现这个需求,我们可以做到：</p>
+<ul>
+<li>1.几乎不用改变以前的代码</li>
+<li>2.不需要设计师给出的切图 </li>
+<li>3.不去关心各种状态，完全独立</li>
+</ul>
+<p>代码如下：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div></pre></td><td class="code"><pre><div class="line">	public class NotifyRadioButton extends RadioButton &#123;</div><div class="line"></div><div class="line">    Paint paint = new Paint(Paint.ANTI_ALIAS_FLAG);</div><div class="line">    float radius;</div><div class="line">    boolean notify;</div><div class="line"></div><div class="line">    public NotifyRadioButton(Context context, AttributeSet attrs) &#123;</div><div class="line">        super(context, attrs);</div><div class="line">        paint.setColor(Color.RED);</div><div class="line">        radius = TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_PX, 12.0f, context.getResources().getDisplayMetrics());</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    @Override</div><div class="line">    protected void onDraw(Canvas canvas) &#123;</div><div class="line">        super.onDraw(canvas);</div><div class="line">        if (notify) &#123;</div><div class="line">            Drawable drawable = getCompoundDrawables()[1];</div><div class="line">            Rect bounds = drawable.getBounds();</div><div class="line">            //float cx, float cy, float radius, @NonNull Paint paint</div><div class="line">            float cx = getMeasuredWidth() / 2 + bounds.width() / 2 - radius / 2;</div><div class="line">            float cy = getPaddingTop() + bounds.height() / 4;</div><div class="line">            canvas.drawCircle(cx, cy, radius, paint);</div><div class="line">        &#125;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    /**</div><div class="line">     * 新消息提醒</div><div class="line">     *</div><div class="line">     * @param notify</div><div class="line">     */</div><div class="line">    public void notify(boolean notify) &#123;</div><div class="line">        this.notify = notify;</div><div class="line">        invalidate();</div><div class="line">    &#125;</div><div class="line"></div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<h5 id="思路："><a href="#思路：" class="headerlink" title="思路："></a>思路：</h5><p>首先我们继承自RadioButton，然后在canvas中自己绘制一个小红点即可。</p>
+<h5 id="canvas分析"><a href="#canvas分析" class="headerlink" title="canvas分析:"></a>canvas分析:</h5><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div></pre></td><td class="code"><pre><div class="line">@Override</div><div class="line">   protected void onDraw(Canvas canvas) &#123;</div><div class="line">       super.onDraw(canvas);</div><div class="line">       if (notify) &#123;</div><div class="line"></div><div class="line">		//获取到DrawableTop,  0 drawableleft 1 drawabletop 2 drawableright 3 drawablebottom</div><div class="line">           Drawable drawable = getCompoundDrawables()[1];</div><div class="line"></div><div class="line">		//获取到Drawable的left right top bottom的值</div><div class="line">           Rect bounds = drawable.getBounds();</div><div class="line">         </div><div class="line">		//这里分析： </div><div class="line">		//getMeasuredWidth() / 2 等于整个控件的水平位置中心点</div><div class="line">		//bounds.width() /2 drawable宽度的一半</div><div class="line">		//radius / 2 小圆点宽度的一半</div><div class="line">		//由于我们在布局文件中设置了Gravity为Center，所以最后小红点的x坐标为drawable图片右边对其+radius/2的位置上</div><div class="line">           float cx = getMeasuredWidth() / 2 + bounds.width() / 2 - radius / 2;</div><div class="line">		//y就比较好定义了，为drawable 1/4即可</div><div class="line">           float cy = getPaddingTop() + bounds.height() / 4;</div><div class="line"></div><div class="line">		//float cx, float cy, float radius, @NonNull Paint paint</div><div class="line">		//把小红点绘制上去</div><div class="line">           canvas.drawCircle(cx, cy, radius, paint);</div><div class="line">       &#125;</div><div class="line">   &#125;</div></pre></td></tr></table></figure>
+<h4 id="计算方式，大家好好理一理，下面测试。我们在以前布局中，将最后一个RadioButton替换为我们自定义的"><a href="#计算方式，大家好好理一理，下面测试。我们在以前布局中，将最后一个RadioButton替换为我们自定义的" class="headerlink" title="计算方式，大家好好理一理，下面测试。我们在以前布局中，将最后一个RadioButton替换为我们自定义的"></a>计算方式，大家好好理一理，下面测试。我们在以前布局中，将最后一个RadioButton替换为我们自定义的</h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div><div class="line">43</div><div class="line">44</div><div class="line">45</div><div class="line">46</div><div class="line">47</div><div class="line">48</div><div class="line">49</div><div class="line">50</div></pre></td><td class="code"><pre><div class="line">&lt;RadioGroup</div><div class="line">      android:id=&quot;@+id/bottom_radiogroup&quot;</div><div class="line">      android:layout_width=&quot;match_parent&quot;</div><div class="line">      android:layout_height=&quot;50dp&quot;</div><div class="line">      android:layout_marginTop=&quot;1px&quot;</div><div class="line">      android:background=&quot;@android:color/white&quot;</div><div class="line">      android:gravity=&quot;center_vertical&quot;</div><div class="line">      android:orientation=&quot;horizontal&quot;&gt;</div><div class="line"></div><div class="line">      &lt;RadioButton</div><div class="line">          android:id=&quot;@+id/home_index&quot;</div><div class="line">          android:layout_width=&quot;0dp&quot;</div><div class="line">          android:layout_height=&quot;wrap_content&quot;</div><div class="line">          android:layout_weight=&quot;1&quot;</div><div class="line">          android:button=&quot;@null&quot;</div><div class="line">          android:checked=&quot;true&quot;</div><div class="line">          android:drawablePadding=&quot;2dp&quot;</div><div class="line">          android:drawableTop=&quot;@drawable/home_index_select&quot;</div><div class="line">          android:gravity=&quot;center&quot;</div><div class="line">          android:text=&quot;首页&quot;</div><div class="line">          android:textColor=&quot;@color/home_select_color&quot;</div><div class="line">          android:textSize=&quot;11sp&quot; /&gt;</div><div class="line"></div><div class="line">      &lt;RadioButton</div><div class="line">          android:id=&quot;@+id/home_bx&quot;</div><div class="line">          android:layout_width=&quot;0dp&quot;</div><div class="line">          android:layout_height=&quot;wrap_content&quot;</div><div class="line">          android:layout_weight=&quot;1&quot;</div><div class="line">          android:button=&quot;@null&quot;</div><div class="line">          android:drawablePadding=&quot;2dp&quot;</div><div class="line">          android:drawableTop=&quot;@drawable/home_bx_select&quot;</div><div class="line">          android:gravity=&quot;center&quot;</div><div class="line">          android:text=&quot;保险&quot;</div><div class="line">          android:textColor=&quot;@color/home_select_color&quot;</div><div class="line">          android:textSize=&quot;11sp&quot; /&gt;</div><div class="line"></div><div class="line">      &lt;com.merchantshengdacar.view.NotifyRadioButton</div><div class="line">          android:id=&quot;@+id/home_my&quot;</div><div class="line">          android:layout_width=&quot;0dp&quot;</div><div class="line">          android:layout_height=&quot;wrap_content&quot;</div><div class="line">          android:layout_weight=&quot;1&quot;</div><div class="line">          android:button=&quot;@null&quot;</div><div class="line">          android:drawablePadding=&quot;2dp&quot;</div><div class="line">          android:drawableTop=&quot;@drawable/home_my_select&quot;</div><div class="line">          android:gravity=&quot;center&quot;</div><div class="line">          android:text=&quot;我的&quot;</div><div class="line">          android:textColor=&quot;@color/home_select_color&quot;</div><div class="line">          android:textSize=&quot;11sp&quot; /&gt;</div><div class="line"></div><div class="line">  &lt;/RadioGroup&gt;</div></pre></td></tr></table></figure>
+<p>然后在代码中，通过id找到控件，调用notify(true),run起来，效果图如下：</p>
+<p><img src="http://upload-images.jianshu.io/upload_images/2756952-d6ff624f5711119c.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="图片.png"></p>
+<h5 id="over！"><a href="#over！" class="headerlink" title="over！"></a>over！</h5><h4 id="CSDN博客-http-blog-csdn-net-qq-28268507-article-details-70314844"><a href="#CSDN博客-http-blog-csdn-net-qq-28268507-article-details-70314844" class="headerlink" title="CSDN博客: http://blog.csdn.net/qq_28268507/article/details/70314844"></a>CSDN博客: <a href="http://blog.csdn.net/qq_28268507/article/details/70314844" target="_blank" rel="external">http://blog.csdn.net/qq_28268507/article/details/70314844</a></h4>
+      
+    </div>
+
+  </div>
+
+  <div class="article-footer">
+    <div class="article-meta pull-left">
+
+    
+      
+
+    <span class="post-categories">
+      <i class="icon-categories"></i>
+        <a href="/categories/android开发/">android开发</a>
+    </span>
+    
+
+    
+    
+
+    <span class="post-tags">
+      <i class="icon-tags"></i>
+        <a href="/tags/安卓/">安卓</a><a href="/tags/自定义view/">自定义view</a>
+    </span>
+    
+
+    </div>
+
+    
+  </div>
+</article>
+
+
+    </main>
+
+    <footer class="site-footer">
+  <p class="site-info">
+    Proudly powered by <a href="https://hexo.io/" target="_blank">Hexo</a> and
+    Theme by <a href="https://github.com/CodeDaraW/Hacker" target="_blank">Hacker</a>
+    </br>
+    
+    &copy; 2017 kimi
+    
+  </p>
+</footer>
+    
+  </div>
+</div>
+</body>
+</html>
