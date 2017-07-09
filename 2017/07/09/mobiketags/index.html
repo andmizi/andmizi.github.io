@@ -1,0 +1,191 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+  <meta charset="utf-8">
+  
+  <title>使用jbox2d物理引擎打造摩拜单车贴纸动画效果 | kimi | 个人博客</title>
+
+  
+  <meta name="author" content="kimi">
+  
+
+  
+  <meta name="description" content="Here We Are Again">
+  
+
+  
+  
+  <meta name="keywords" content="动画,物理引擎">
+  
+
+  <meta id="viewport" name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, minimum-scale=1, user-scalable=no, minimal-ui">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black">
+
+  <meta property="og:title" content="使用jbox2d物理引擎打造摩拜单车贴纸动画效果"/>
+
+  <meta property="og:site_name" content="kimi"/>
+
+  
+  <meta property="og:image" content="/favicon.ico"/>
+  
+
+  <link href="/favicon.ico" rel="icon">
+  <link rel="alternate" href="/atom.xml" title="kimi" type="application/atom+xml">
+  <link rel="stylesheet" href="/css/style.css" media="screen" type="text/css">
+</head>
+
+
+<body>
+<div class="blog">
+  <div class="content">
+
+    <header>
+  <div class="site-branding">
+    <h1 class="site-title">
+      <a href="/">kimi</a>
+    </h1>
+    <p class="site-description">个人博客</p>
+  </div>
+  <nav class="site-navigation">
+    <ul>
+      
+        <li><a href="/">主页</a></li>
+      
+        <li><a href="/archives">归档</a></li>
+      
+        <li><a href="/about">关于我</a></li>
+      
+    </ul>
+  </nav>
+</header>
+
+    <main class="site-main posts-loop">
+    <article>
+
+  
+    
+    <h3 class="article-title"><span>使用jbox2d物理引擎打造摩拜单车贴纸动画效果</span></h3>
+    
+  
+
+  <div class="article-top-meta">
+    <span class="posted-on">
+      <a href="/2017/07/09/mobiketags/" rel="bookmark">
+        <time class="entry-date published" datetime="2017-07-09T07:10:04.000Z">
+          2017-07-09
+        </time>
+      </a>
+    </span>
+  </div>
+
+
+  
+
+  <div class="article-content">
+    <div class="entry">
+      
+        <h2 id="使用jbox2d物理引擎打造摩拜单车贴纸动画效果"><a href="#使用jbox2d物理引擎打造摩拜单车贴纸动画效果" class="headerlink" title="使用jbox2d物理引擎打造摩拜单车贴纸动画效果"></a>使用jbox2d物理引擎打造摩拜单车贴纸动画效果</h2><p>继上一次实现了ofo小黄人斗鸡眼效果(眼珠跟随手机加速器自动滚动)，想看效果的朋友，请点击这篇文章 <a href="http://blog.csdn.net/qq_28268507/article/details/74528637" target="_blank" rel="external">http://blog.csdn.net/qq_28268507/article/details/74528637</a></p>
+<p>接下来我们在看下摩拜单车安卓客户端贴纸动画，是什么样子呢？先上一副动态图:</p>
+<a id="more"></a>
+<p><img src="http://upload-images.jianshu.io/upload_images/2756952-e4536e70ff552148.gif?imageMogr2/auto-orient/strip" alt="mobike_demo.gif"></p>
+<p>效果很炫，也很漂亮，至少看起来实现的难度要比ofo那个大的多。那么该怎么实现呢？(这里插下题外话，ios端比较容易实现，因为系统内置了某些api，可以很方便的实现这样的效果)，可我们是安卓程序员啊，怎么办？自定义view？嗯，好像可以，但是这坐标怎么计算？并且还持续运动着，还有弹力，摩擦力，碰撞力…..</p>
+<p>大脑一片茫然，如果产品经理坚决的确定需要这个效果，咋整？先不慌，我们可以先了解下摩拜单车是如何实现这样的效果的，很不幸，经过反编译摩拜单车apk后，安装包进行了加固，连混淆后的代码都看不到.</p>
+<p>于是就上网各种搜索酷炫动画，不经意间发现了jbox2d物理引擎,然后回头在看下摩拜单车的apk，发现了其用到了libgdx-box2d，所以说摩拜是使用libgdx-box2d物理引擎来实现的这个效果：</p>
+<p><img src="http://upload-images.jianshu.io/upload_images/2756952-71942b9498a4d364.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="image.png"></p>
+<h3 id="jbox2d和libgdx-box2d："><a href="#jbox2d和libgdx-box2d：" class="headerlink" title="jbox2d和libgdx-box2d："></a>jbox2d和libgdx-box2d：</h3><p>jbox2d和libgdx-box2d有什么区别，他们之间的关系是什么?</p>
+<h4 id="jbox2d"><a href="#jbox2d" class="headerlink" title="jbox2d:"></a>jbox2d:</h4><p>jbox2d百度百科这样描述的: jbox2D物理引擎原版 Box2D 是采用C++编写的，后来扩展到java，as等多种版本。著名手机游戏愤怒的小鸟便是采用jbox2D物理引擎。不过java版的jbox2D引擎性能不如C++环境下运行的性能好。在性能配置比较好的手机上面，jbox2D效果也是不错的。</p>
+<h4 id="libgdx"><a href="#libgdx" class="headerlink" title="libgdx:"></a>libgdx:</h4><p>libgdx百度百科这样描述的:libGdx是一个跨平台的2D/3D的游戏开发框架，它由Java/C/C++语言编写而成。</p>
+<p>可能看完百度百科，还是比较模糊，我们只知道了他俩都是物理引擎，并且知道了愤怒的小鸟，就是用jbox2d引擎开发的。</p>
+<p>后来经过搜索了解得出这样一句话:Libgdx使用jni封装了box2d的c++版本,使得其运行效率比其他同级的物理引擎如jbox2d快不少。所以最后的结论是jbox2d是面向java的，运行效率要慢。而libgdx是面向c/c++的，运行效率要快。</p>
+<p>这次效果的实现是基于jbox2d上完成的，最终效果图如下:</p>
+<p><img src="http://upload-images.jianshu.io/upload_images/2756952-eca8d16915e7b2f2.gif?imageMogr2/auto-orient/strip" alt="mobike.gif"></p>
+<h3 id="APK-下载体验"><a href="#APK-下载体验" class="headerlink" title="APK 下载体验:"></a>APK 下载体验:</h3><p><img src="http://upload-images.jianshu.io/upload_images/2756952-d98914def30046fe.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="qrcode.png"></p>
+<h4 id="Github地址-https-github-com-andmizi-MobikeTags-欢迎star"><a href="#Github地址-https-github-com-andmizi-MobikeTags-欢迎star" class="headerlink" title="Github地址: https://github.com/andmizi/MobikeTags 欢迎star"></a>Github地址: <a href="https://github.com/andmizi/MobikeTags" target="_blank" rel="external">https://github.com/andmizi/MobikeTags</a> 欢迎star</h4><h4 id="jbox2d快速上手，推荐参考百度文库-https-wenku-baidu-com-view-c584cbfaf90f76c661371a5f-html"><a href="#jbox2d快速上手，推荐参考百度文库-https-wenku-baidu-com-view-c584cbfaf90f76c661371a5f-html" class="headerlink" title="jbox2d快速上手，推荐参考百度文库 https://wenku.baidu.com/view/c584cbfaf90f76c661371a5f.html"></a>jbox2d快速上手，推荐参考百度文库 <a href="https://wenku.baidu.com/view/c584cbfaf90f76c661371a5f.html" target="_blank" rel="external">https://wenku.baidu.com/view/c584cbfaf90f76c661371a5f.html</a></h4><p>网上的文档都是比较过时的，新版中有些地方有变化，不过不影响快速入门。</p>
+<h4 id="jbox2d-Github-https-github-com-jbox2d-jbox2d"><a href="#jbox2d-Github-https-github-com-jbox2d-jbox2d" class="headerlink" title="jbox2d Github: https://github.com/jbox2d/jbox2d"></a>jbox2d Github: <a href="https://github.com/jbox2d/jbox2d" target="_blank" rel="external">https://github.com/jbox2d/jbox2d</a></h4><p>简单描述下jbox2d物理引擎在安卓中的用法，jbox2d物理引擎并不负责view的绘制，只负物理数据的计算和分析，如物体的密度，质量，摩擦力，速度，碰撞力，恢复力……</p>
+<p>通俗的讲，在安卓中一个view代表了一个物体，也就是刚体，通过view和刚体的绑定并设置初始参数，最后不停的draw，再从绑定的刚体中取出参数绘制到界面上，如此循环。而物体的所有物理参数都由jbox2d物理引擎帮助我们完成。</p>
+<p>在MobikeLibrary中，自己只写了两个类，就实现了如上效果</p>
+<p><img src="http://upload-images.jianshu.io/upload_images/2756952-56ddd9548a1dadce.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="image.png"></p>
+<p>Mobike和MobikeView是自己写的，org.jbox2d是官方的源代码，MobikeLibrary的具体使用请查看 <a href="https://github.com/andmizi/MobikeTags" target="_blank" rel="external">https://github.com/andmizi/MobikeTags</a></p>
+<p>MobikeView.java:</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div><div class="line">43</div><div class="line">44</div><div class="line">45</div><div class="line">46</div><div class="line">47</div><div class="line">48</div><div class="line">49</div></pre></td><td class="code"><pre><div class="line">package com.mobike.library;</div><div class="line">import android.content.Context;</div><div class="line">import android.graphics.Canvas;</div><div class="line">import android.support.annotation.NonNull;</div><div class="line">import android.support.annotation.Nullable;</div><div class="line">import android.util.AttributeSet;</div><div class="line">import android.widget.FrameLayout;</div><div class="line"></div><div class="line">/**</div><div class="line"> * Created by kimi on 2017/7/8 0008.</div><div class="line"> * Email: 24750@163.com</div><div class="line"> */</div><div class="line"></div><div class="line">public class MobikeView extends FrameLayout &#123;</div><div class="line"></div><div class="line">    private Mobike mMobike;</div><div class="line"></div><div class="line">    public MobikeView(@NonNull Context context) &#123;</div><div class="line">        this(context,null);</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    public MobikeView(@NonNull Context context, @Nullable AttributeSet attrs) &#123;</div><div class="line">        super(context, attrs);</div><div class="line">        setWillNotDraw(false);</div><div class="line">        mMobike = new Mobike(this);</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    @Override</div><div class="line">    protected void onSizeChanged(int w, int h, int oldw, int oldh) &#123;</div><div class="line">        super.onSizeChanged(w, h, oldw, oldh);</div><div class="line">        mMobike.onSizeChanged(w,h);</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    @Override</div><div class="line">    protected void onLayout(boolean changed, int left, int top, int right, int bottom) &#123;</div><div class="line">        super.onLayout(changed, left, top, right, bottom);</div><div class="line">        mMobike.onLayout(changed);</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    @Override</div><div class="line">    protected void onDraw(Canvas canvas) &#123;</div><div class="line">        super.onDraw(canvas);</div><div class="line">        mMobike.onDraw(canvas);</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    public Mobike getmMobike()&#123;</div><div class="line">        return this.mMobike;</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>MobikeView继承自Framelayout，比较简单，这里略过</p>
+<p>Mobike.java</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div><div class="line">43</div><div class="line">44</div><div class="line">45</div><div class="line">46</div><div class="line">47</div><div class="line">48</div><div class="line">49</div><div class="line">50</div><div class="line">51</div><div class="line">52</div><div class="line">53</div><div class="line">54</div><div class="line">55</div><div class="line">56</div><div class="line">57</div><div class="line">58</div><div class="line">59</div><div class="line">60</div><div class="line">61</div><div class="line">62</div><div class="line">63</div><div class="line">64</div><div class="line">65</div><div class="line">66</div><div class="line">67</div><div class="line">68</div><div class="line">69</div><div class="line">70</div><div class="line">71</div><div class="line">72</div><div class="line">73</div><div class="line">74</div><div class="line">75</div><div class="line">76</div><div class="line">77</div><div class="line">78</div><div class="line">79</div><div class="line">80</div><div class="line">81</div><div class="line">82</div><div class="line">83</div><div class="line">84</div><div class="line">85</div><div class="line">86</div><div class="line">87</div><div class="line">88</div><div class="line">89</div><div class="line">90</div><div class="line">91</div><div class="line">92</div><div class="line">93</div><div class="line">94</div><div class="line">95</div><div class="line">96</div><div class="line">97</div><div class="line">98</div><div class="line">99</div><div class="line">100</div><div class="line">101</div><div class="line">102</div><div class="line">103</div><div class="line">104</div><div class="line">105</div><div class="line">106</div><div class="line">107</div><div class="line">108</div><div class="line">109</div><div class="line">110</div><div class="line">111</div><div class="line">112</div><div class="line">113</div><div class="line">114</div><div class="line">115</div><div class="line">116</div><div class="line">117</div><div class="line">118</div><div class="line">119</div><div class="line">120</div><div class="line">121</div><div class="line">122</div><div class="line">123</div><div class="line">124</div><div class="line">125</div><div class="line">126</div><div class="line">127</div><div class="line">128</div><div class="line">129</div><div class="line">130</div><div class="line">131</div><div class="line">132</div><div class="line">133</div><div class="line">134</div><div class="line">135</div><div class="line">136</div><div class="line">137</div><div class="line">138</div><div class="line">139</div><div class="line">140</div><div class="line">141</div><div class="line">142</div><div class="line">143</div><div class="line">144</div><div class="line">145</div><div class="line">146</div><div class="line">147</div><div class="line">148</div><div class="line">149</div><div class="line">150</div><div class="line">151</div><div class="line">152</div><div class="line">153</div><div class="line">154</div><div class="line">155</div><div class="line">156</div><div class="line">157</div><div class="line">158</div><div class="line">159</div><div class="line">160</div><div class="line">161</div><div class="line">162</div><div class="line">163</div><div class="line">164</div><div class="line">165</div><div class="line">166</div><div class="line">167</div><div class="line">168</div><div class="line">169</div><div class="line">170</div><div class="line">171</div><div class="line">172</div><div class="line">173</div><div class="line">174</div><div class="line">175</div><div class="line">176</div><div class="line">177</div><div class="line">178</div><div class="line">179</div><div class="line">180</div><div class="line">181</div><div class="line">182</div><div class="line">183</div><div class="line">184</div><div class="line">185</div><div class="line">186</div><div class="line">187</div><div class="line">188</div><div class="line">189</div><div class="line">190</div><div class="line">191</div><div class="line">192</div><div class="line">193</div><div class="line">194</div><div class="line">195</div><div class="line">196</div><div class="line">197</div><div class="line">198</div><div class="line">199</div><div class="line">200</div><div class="line">201</div><div class="line">202</div><div class="line">203</div><div class="line">204</div><div class="line">205</div><div class="line">206</div><div class="line">207</div><div class="line">208</div><div class="line">209</div><div class="line">210</div><div class="line">211</div><div class="line">212</div><div class="line">213</div><div class="line">214</div><div class="line">215</div><div class="line">216</div><div class="line">217</div><div class="line">218</div><div class="line">219</div><div class="line">220</div><div class="line">221</div><div class="line">222</div><div class="line">223</div><div class="line">224</div><div class="line">225</div><div class="line">226</div><div class="line">227</div><div class="line">228</div><div class="line">229</div><div class="line">230</div><div class="line">231</div><div class="line">232</div><div class="line">233</div><div class="line">234</div><div class="line">235</div><div class="line">236</div><div class="line">237</div><div class="line">238</div><div class="line">239</div><div class="line">240</div><div class="line">241</div><div class="line">242</div><div class="line">243</div><div class="line">244</div><div class="line">245</div><div class="line">246</div><div class="line">247</div><div class="line">248</div><div class="line">249</div><div class="line">250</div><div class="line">251</div><div class="line">252</div><div class="line">253</div><div class="line">254</div><div class="line">255</div><div class="line">256</div><div class="line">257</div><div class="line">258</div><div class="line">259</div><div class="line">260</div><div class="line">261</div><div class="line">262</div><div class="line">263</div><div class="line">264</div><div class="line">265</div><div class="line">266</div><div class="line">267</div><div class="line">268</div><div class="line">269</div><div class="line">270</div><div class="line">271</div><div class="line">272</div><div class="line">273</div><div class="line">274</div><div class="line">275</div><div class="line">276</div><div class="line">277</div><div class="line">278</div><div class="line">279</div><div class="line">280</div><div class="line">281</div><div class="line">282</div><div class="line">283</div><div class="line">284</div><div class="line">285</div><div class="line">286</div><div class="line">287</div><div class="line">288</div><div class="line">289</div><div class="line">290</div><div class="line">291</div><div class="line">292</div><div class="line">293</div></pre></td><td class="code"><pre><div class="line">package com.mobike.library;</div><div class="line"></div><div class="line">import android.graphics.Canvas;</div><div class="line">import android.util.Log;</div><div class="line">import android.view.View;</div><div class="line">import android.view.ViewGroup;</div><div class="line">import org.jbox2d.collision.shapes.CircleShape;</div><div class="line">import org.jbox2d.collision.shapes.PolygonShape;</div><div class="line">import org.jbox2d.collision.shapes.Shape;</div><div class="line">import org.jbox2d.common.Vec2;</div><div class="line">import org.jbox2d.dynamics.Body;</div><div class="line">import org.jbox2d.dynamics.BodyDef;</div><div class="line">import org.jbox2d.dynamics.BodyType;</div><div class="line">import org.jbox2d.dynamics.FixtureDef;</div><div class="line">import org.jbox2d.dynamics.World;</div><div class="line">import java.util.Random;</div><div class="line"></div><div class="line">/**</div><div class="line"> * Created by kimi on 2017/7/8 0008.</div><div class="line"> * Email: 24750@163.com</div><div class="line"> */</div><div class="line"></div><div class="line">public class Mobike &#123;</div><div class="line"></div><div class="line">    public static final String TAG = Mobike.class.getSimpleName();</div><div class="line"></div><div class="line">    private World world;</div><div class="line">    private float dt = 1f / 60f;</div><div class="line">    private int velocityIterations = 3;</div><div class="line">    private int positionIterations = 10;</div><div class="line">    private float friction = 0.3f,density = 0.5f,restitution = 0.3f,ratio = 50;</div><div class="line">    private int width,height;</div><div class="line">    private boolean enable = true;</div><div class="line">    private final Random random = new Random();</div><div class="line"></div><div class="line">    private ViewGroup mViewgroup;</div><div class="line"></div><div class="line">    public Mobike(ViewGroup viewgroup) &#123;</div><div class="line">        this.mViewgroup = viewgroup;</div><div class="line">        density = viewgroup.getContext().getResources().getDisplayMetrics().density;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    public void onSizeChanged(int width,int height)&#123;</div><div class="line">        this.width = width;</div><div class="line">        this.height = height;</div><div class="line">		//sizeChanged的时候获取到viewgroup的宽和高</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    public void onDraw(Canvas canvas) &#123;</div><div class="line">        if(!enable)&#123; //设置标记，在界面可见的时候开始draw，在界面不可见的时候停止draw</div><div class="line">            return;</div><div class="line">        &#125;</div><div class="line">		//dt 更新引擎的间隔时间</div><div class="line">		//velocityIterations 计算速度</div><div class="line">		//positionIterations 迭代的次数</div><div class="line">        world.step(dt,velocityIterations,positionIterations);</div><div class="line">        int childCount = mViewgroup.getChildCount();</div><div class="line">        for(int i = 0; i &lt; childCount; i++)&#123;</div><div class="line">            View view = mViewgroup.getChildAt(i);</div><div class="line">            Body body = (Body) view.getTag(R.id.mobike_body_tag);</div><div class="line">            if(body != null)&#123;</div><div class="line">				//从view中获取绑定的刚体，取出参数，开始更新view</div><div class="line">                view.setX(metersToPixels(body.getPosition().x) - view.getWidth() / 2);</div><div class="line">                view.setY(metersToPixels(body.getPosition().y) - view.getHeight() / 2);</div><div class="line">                view.setRotation(radiansToDegrees(body.getAngle() % 360));</div><div class="line">            &#125;</div><div class="line">        &#125;</div><div class="line">		//手动调用，反复执行draw方法</div><div class="line">        mViewgroup.invalidate();</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    public void onLayout(boolean changed) &#123;</div><div class="line">        createWorld(changed);</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    public void onStart()&#123;</div><div class="line">        setEnable(true);</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    public void onStop()&#123;</div><div class="line">        setEnable(false);</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    public void update()&#123;</div><div class="line">        world = null;</div><div class="line">        onLayout(true);</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    private void createWorld(boolean changed) &#123;</div><div class="line">		//jbox2d中world称为世界，这里创建一个世界</div><div class="line">        if(world == null)&#123;</div><div class="line">            world = new World(new Vec2(0, 10.0f));</div><div class="line">			//创建边界，注意边界为static静态的，当物体触碰到边界，停止模拟该物体</div><div class="line">            createTopAndBottomBounds();</div><div class="line">            createLeftAndRightBounds();</div><div class="line">        &#125;</div><div class="line">        int childCount = mViewgroup.getChildCount();</div><div class="line">        for(int i = 0; i &lt; childCount; i++)&#123;</div><div class="line">            View view = mViewgroup.getChildAt(i);</div><div class="line">            Body body = (Body) view.getTag(R.id.mobike_body_tag);</div><div class="line">            if(body == null || changed)&#123;</div><div class="line">                createBody(world,view);</div><div class="line">            &#125;</div><div class="line">        &#125;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    private void createBody(World world, View view) &#123;</div><div class="line">		//创建刚体描述，因为刚体需要随重力运动，这里type设置为DYNAMIC</div><div class="line">        BodyDef bodyDef = new BodyDef();</div><div class="line">        bodyDef.setType(BodyType.DYNAMIC);</div><div class="line">		</div><div class="line">		//设置初始参数，为view的中心点</div><div class="line">        bodyDef.position.set(pixelsToMeters(view.getX() + view.getWidth() / 2) ,</div><div class="line">                             pixelsToMeters(view.getY() + view.getHeight() / 2));</div><div class="line">        Shape shape = null;</div><div class="line">        Boolean isCircle = (Boolean) view.getTag(R.id.mobike_view_circle_tag);</div><div class="line">        if(isCircle != null &amp;&amp; isCircle)&#123;</div><div class="line">			//创建圆体形状</div><div class="line">            shape = createCircleShape(view);</div><div class="line">        &#125;else&#123;</div><div class="line">			//创建多边形形状</div><div class="line">            shape = createPolygonShape(view);</div><div class="line">        &#125;</div><div class="line">		//初始化物体信息</div><div class="line">		//friction  物体摩擦力</div><div class="line">		//restitution 物体恢复系数</div><div class="line">		//density 物体密度</div><div class="line">        FixtureDef fixture = new FixtureDef();</div><div class="line">        fixture.setShape(shape);</div><div class="line">        fixture.friction = friction;</div><div class="line">        fixture.restitution = restitution;</div><div class="line">        fixture.density = density;</div><div class="line"></div><div class="line">		//用世界创建出刚体</div><div class="line">        Body body = world.createBody(bodyDef);</div><div class="line">        body.createFixture(fixture);</div><div class="line">        view.setTag(R.id.mobike_body_tag,body);</div><div class="line">		//初始化物体的运动行为</div><div class="line">        body.setLinearVelocity(new Vec2(random.nextFloat(),random.nextFloat()));</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    private Shape createCircleShape(View view)&#123;</div><div class="line">        CircleShape circleShape = new CircleShape();</div><div class="line">        circleShape.setRadius(pixelsToMeters(view.getWidth() / 2));</div><div class="line">        return circleShape;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    private Shape createPolygonShape(View view)&#123;</div><div class="line">        PolygonShape polygonShape = new PolygonShape();</div><div class="line">        polygonShape.setAsBox(pixelsToMeters(view.getWidth() / 2),pixelsToMeters(view.getHeight() / 2));</div><div class="line">        return polygonShape;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    private void createTopAndBottomBounds() &#123;</div><div class="line">        BodyDef bodyDef = new BodyDef();</div><div class="line">        bodyDef.type = BodyType.STATIC;</div><div class="line"></div><div class="line">        PolygonShape box = new PolygonShape();</div><div class="line">        float boxWidth = pixelsToMeters(width);</div><div class="line">        float boxHeight =  pixelsToMeters(ratio);</div><div class="line">        box.setAsBox(boxWidth, boxHeight);</div><div class="line"></div><div class="line">        FixtureDef fixtureDef = new FixtureDef();</div><div class="line">        fixtureDef.shape = box;</div><div class="line">        fixtureDef.density = 0.5f;</div><div class="line">        fixtureDef.friction = 0.3f;</div><div class="line">        fixtureDef.restitution = 0.5f;</div><div class="line"></div><div class="line">        bodyDef.position.set(0, -boxHeight);</div><div class="line">        Body topBody = world.createBody(bodyDef);</div><div class="line">        topBody.createFixture(fixtureDef);</div><div class="line"></div><div class="line">        bodyDef.position.set(0, pixelsToMeters(height)+boxHeight);</div><div class="line">        Body bottomBody = world.createBody(bodyDef);</div><div class="line">        bottomBody.createFixture(fixtureDef);</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    private void createLeftAndRightBounds() &#123;</div><div class="line">        float boxWidth = pixelsToMeters(ratio);</div><div class="line">        float boxHeight = pixelsToMeters(height);</div><div class="line"></div><div class="line">        BodyDef bodyDef = new BodyDef();</div><div class="line">        bodyDef.type = BodyType.STATIC;</div><div class="line"></div><div class="line">        PolygonShape box = new PolygonShape();</div><div class="line">        box.setAsBox(boxWidth, boxHeight);</div><div class="line">        FixtureDef fixtureDef = new FixtureDef();</div><div class="line">        fixtureDef.shape = box;</div><div class="line">        fixtureDef.density = 0.5f;</div><div class="line">        fixtureDef.friction = 0.3f;</div><div class="line">        fixtureDef.restitution = 0.5f;</div><div class="line"></div><div class="line">        bodyDef.position.set(-boxWidth, boxHeight);</div><div class="line">        Body leftBody = world.createBody(bodyDef);</div><div class="line">        leftBody.createFixture(fixtureDef);</div><div class="line"></div><div class="line"></div><div class="line">        bodyDef.position.set(pixelsToMeters(width) + boxWidth, 0);</div><div class="line">        Body rightBody = world.createBody(bodyDef);</div><div class="line">        rightBody.createFixture(fixtureDef);</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    private float radiansToDegrees(float radians) &#123;</div><div class="line">        return radians / 3.14f * 180f;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    private float degreesToRadians(float degrees)&#123;</div><div class="line">        return (degrees / 180f) * 3.14f;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    public float metersToPixels(float meters) &#123;</div><div class="line">        return meters * ratio;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    public float pixelsToMeters(float pixels) &#123;</div><div class="line">        return pixels / ratio;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    public void random() &#123;</div><div class="line">		//弹一下，模拟运动</div><div class="line">        int childCount = mViewgroup.getChildCount();</div><div class="line">        for (int i = 0; i &lt; childCount; i++) &#123;</div><div class="line">            Vec2 impulse = new Vec2(random.nextInt(1000) - 1000, random.nextInt(1000) - 1000);</div><div class="line">            View view = mViewgroup.getChildAt(i);</div><div class="line">            Body body = (Body) view.getTag(R.id.mobike_body_tag);</div><div class="line">            if(body != null)&#123;</div><div class="line">                body.applyLinearImpulse(impulse, body.getPosition(),true);</div><div class="line">            &#125;</div><div class="line">        &#125;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    public void onSensorChanged(float x,float y) &#123;</div><div class="line">		//传感器模拟运动</div><div class="line">        int childCount = mViewgroup.getChildCount();</div><div class="line">        for (int i = 0; i &lt; childCount; i++) &#123;</div><div class="line">            Vec2 impulse = new Vec2(x, y);</div><div class="line">            View view = mViewgroup.getChildAt(i);</div><div class="line">            Body body = (Body) view.getTag(R.id.mobike_body_tag);</div><div class="line">            if(body != null)&#123;</div><div class="line">                body.applyLinearImpulse(impulse, body.getPosition(),true);</div><div class="line">            &#125;</div><div class="line">        &#125;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    public float getFriction() &#123;</div><div class="line">        return friction;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    public void setFriction(float friction) &#123;</div><div class="line">        if(friction &gt;= 0)&#123;</div><div class="line">            this.friction = friction;</div><div class="line">        &#125;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    public float getDensity() &#123;</div><div class="line">        return density;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    public void setDensity(float density) &#123;</div><div class="line">        if(density &gt;= 0)&#123;</div><div class="line">            this.density = density;</div><div class="line">        &#125;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    public float getRestitution() &#123;</div><div class="line">        return restitution;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    public void setRestitution(float restitution) &#123;</div><div class="line">        if(restitution &gt;= 0)&#123;</div><div class="line">            this.restitution = restitution;</div><div class="line">        &#125;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    public float getRatio() &#123;</div><div class="line">        return ratio;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    public void setRatio(float ratio) &#123;</div><div class="line">        if(ratio &gt;= 0)&#123;</div><div class="line">            this.ratio = ratio;</div><div class="line">        &#125;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    public boolean getEnable() &#123;</div><div class="line">        return enable;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    public void setEnable(boolean enable) &#123;</div><div class="line">        this.enable = enable;</div><div class="line">        mViewgroup.invalidate();</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>阅读顺序，onlayout—ondraw，如果你仔细阅读过上面的百度文库，应该都可以看的懂代码。</p>
+<p>如果觉得还不错，请给个star <a href="https://github.com/andmizi/MobikeTags" target="_blank" rel="external">https://github.com/andmizi/MobikeTags</a> thx~</p>
+<h4 id="CSDN博客-http-blog-csdn-net-qq-28268507-article-details-74892372"><a href="#CSDN博客-http-blog-csdn-net-qq-28268507-article-details-74892372" class="headerlink" title="CSDN博客:http://blog.csdn.net/qq_28268507/article/details/74892372"></a>CSDN博客:<a href="http://blog.csdn.net/qq_28268507/article/details/74892372" target="_blank" rel="external">http://blog.csdn.net/qq_28268507/article/details/74892372</a></h4><h4 id="简书博客-http-www-jianshu-com-p-3a7c84e29311"><a href="#简书博客-http-www-jianshu-com-p-3a7c84e29311" class="headerlink" title="简书博客:http://www.jianshu.com/p/3a7c84e29311"></a>简书博客:<a href="http://www.jianshu.com/p/3a7c84e29311" target="_blank" rel="external">http://www.jianshu.com/p/3a7c84e29311</a></h4><h4 id="个人博客-http-www-itkimi-com"><a href="#个人博客-http-www-itkimi-com" class="headerlink" title="个人博客:http://www.itkimi.com"></a>个人博客:<a href="http://www.itkimi.com">http://www.itkimi.com</a></h4>
+      
+    </div>
+
+  </div>
+
+  <div class="article-footer">
+    <div class="article-meta pull-left">
+
+    
+      
+
+    <span class="post-categories">
+      <i class="icon-categories"></i>
+        <a href="/categories/android/">android</a>, <a href="/categories/android/java/">java</a>, <a href="/categories/android/java/jbox2d/">jbox2d</a>
+    </span>
+    
+
+    
+    
+
+    <span class="post-tags">
+      <i class="icon-tags"></i>
+        <a href="/tags/动画/">动画</a><a href="/tags/物理引擎/">物理引擎</a>
+    </span>
+    
+
+    </div>
+
+	<!-- 第三方评论 -->
+    
+  </div>
+</article>
+
+  
+	<div id="comment">
+		
+		
+	<div id="SOHUCS" sid="http://www.itkimi.com/2017/07/09/mobiketags/" ></div> 
+	<script type="text/javascript"> 
+	(function(){ 
+	var appid = 'cyt6iEBkx'; 
+	var conf = 'prod_46bee0d54fc91810c69f29fcca034697'; 
+	var width = window.innerWidth || document.documentElement.clientWidth; 
+	if (width < 960) { 
+	window.document.write('<script id="changyan_mobile_js" charset="utf-8" type="text/javascript" src="http://changyan.sohu.com/upload/mobile/wap-js/changyan_mobile.js?client_id=' + appid + '&conf=' + conf + '"><\/script>'); } else { var loadJs=function(d,a){var c=document.getElementsByTagName("head")[0]||document.head||document.documentElement;var b=document.createElement("script");b.setAttribute("type","text/javascript");b.setAttribute("charset","UTF-8");b.setAttribute("src",d);if(typeof a==="function"){if(window.attachEvent){b.onreadystatechange=function(){var e=b.readyState;if(e==="loaded"||e==="complete"){b.onreadystatechange=null;a()}}}else{b.onload=a}}c.appendChild(b)};loadJs("http://changyan.sohu.com/upload/changyan.js",function(){window.changyan.api.config({appid:appid,conf:conf})}); } })(); </script>
+		
+		
+	<!--
+	
+	 <div class="ds-thread" data-thread-key="/2017/07/09/mobiketags/" data-title="使用jbox2d物理引擎打造摩拜单车贴纸动画效果" data-url="http://www.itkimi.com/2017/07/09/mobiketags/"></div>
+	
+	-->
+	</div>
+
+
+
+
+    </main>
+
+    <footer class="site-footer">
+  <p class="site-info">
+    Proudly powered by <a href="https://hexo.io/" target="_blank">Hexo</a> and
+    Theme by <a href="https://github.com/CodeDaraW/Hacker" target="_blank">Hacker</a>
+    </br>
+    
+    &copy; 2017 kimi
+    
+  </p>
+</footer>
+    
+  </div>
+</div>
+</body>
+</html>
