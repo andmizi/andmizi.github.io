@@ -180,7 +180,9 @@ public void onCreate() {
     MobclickAgent.setCatchUncaughtExceptions(false);
     CrashHandler.getInstance().init();
 }
-</code></pre><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div></pre></td><td class="code"><pre><div class="line"></div><div class="line"></div><div class="line">#### 将Matisse进程化</div><div class="line"></div><div class="line">由于Matisse是开源的，所以我们需要下载他的源码并导入到Android Studio中，并在其上进行简单修改即可。</div><div class="line"></div><div class="line">![微信图片_20171017135401.png](http://upload-images.jianshu.io/upload_images/2756952-7a7760ed9fbfb16a.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)</div><div class="line"></div><div class="line">我们打开Matisse的AndroidManifest.xml修改代码如下：</div></pre></td></tr></table></figure>
+</code></pre><h4 id="将Matisse进程化"><a href="#将Matisse进程化" class="headerlink" title="将Matisse进程化"></a>将Matisse进程化</h4><p>由于Matisse是开源的，所以我们需要下载他的源码并导入到Android Studio中，并在其上进行简单修改即可。</p>
+<p><img src="http://upload-images.jianshu.io/upload_images/2756952-7a7760ed9fbfb16a.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="微信图片_20171017135401.png"></p>
+<p>我们打开Matisse的AndroidManifest.xml修改代码如下：</p>
 <pre><code>&lt;manifest
     xmlns:android=&quot;http://schemas.android.com/apk/res/android&quot;
     package=&quot;com.zhihu.matisse&quot;&gt;
@@ -194,7 +196,7 @@ public void onCreate() {
         &lt;activity android:name=&quot;com.zhihu.matisse.internal.ui.SelectedPreviewActivity&quot; android:process=&quot;:matisse&quot;/&gt;
     &lt;/application&gt;
 &lt;/manifest&gt;
-</code></pre><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line"></div><div class="line"></div><div class="line">然后我们看下Matisse的使用：</div></pre></td></tr></table></figure>
+</code></pre><p>然后我们看下Matisse的使用：</p>
 <pre><code>Matisse.from(MainActivity.this)
         .choose(MimeType.allOf())
         .countable(true)
@@ -205,7 +207,7 @@ public void onCreate() {
         .thumbnailScale(0.85f)
         .imageEngine(new GlideEngine())
         .forResult(REQUEST_CODE_CHOOSE);
-</code></pre><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line"></div><div class="line">链式调用，进行了一些配置设置之后进行了startActivityForResult</div></pre></td></tr></table></figure>
+</code></pre><p>链式调用，进行了一些配置设置之后进行了startActivityForResult</p>
 <pre><code>public void forResult(int requestCode) {
         Activity activity = mMatisse.getActivity();
         if (activity == null) {
@@ -221,7 +223,9 @@ public void onCreate() {
             activity.startActivityForResult(intent, requestCode);
         }
  }
-</code></pre><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line"></div><div class="line">通过简单的阅读代码后，我们知道了大概的流程，所以我们只需要将那些配置参数转换为Bundle来进行intent传输，并取出最后进行设置即可。</div><div class="line"></div><div class="line">这里说下startActivityForResult 和 onActivityResult 是支持跨进程间的，所以这里我们无需其他的进程间通讯技术。</div><div class="line"></div><div class="line">修改后的代码：</div></pre></td></tr></table></figure>
+</code></pre><p>通过简单的阅读代码后，我们知道了大概的流程，所以我们只需要将那些配置参数转换为Bundle来进行intent传输，并取出最后进行设置即可。</p>
+<p>这里说下startActivityForResult 和 onActivityResult 是支持跨进程间的，所以这里我们无需其他的进程间通讯技术。</p>
+<p>修改后的代码：</p>
 <pre><code>//工具类，直接调用，跳转到图片选择界面，最后通过onActivityResult回调选中结果
 public static void openPhotoSlect(Activity activity, int maxSize) {
         Bundle bundle = new Bundle();
@@ -232,7 +236,7 @@ public static void openPhotoSlect(Activity activity, int maxSize) {
                 .choose(MimeType.ofImage(), false)
                 .forResult(Constant.INTENT_MATISSE_REQUEST,bundle);
 }
-</code></pre><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line"></div><div class="line">SelectionSpec源码配置参数设置，进行了一些初始值的设置：</div></pre></td></tr></table></figure>
+</code></pre><p>SelectionSpec源码配置参数设置，进行了一些初始值的设置：</p>
 <pre><code> public Set&lt;MimeType&gt; mimeTypeSet = MimeType.ofImage();
 public boolean mediaTypeExclusive;
 public boolean showSingleMediaType;
@@ -252,7 +256,9 @@ public ImageEngine imageEngine = new GlideEngine();
 private SelectionSpec() {
     filters.add(new GifSizeFilter(320, 320, 5 * Filter.K * Filter.K));
 }
-</code></pre><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line"></div><div class="line">这里我们就完成了Matisse的进程化，最后说下Matisse的细节问题。</div><div class="line"></div><div class="line">由于项目中有图片预览功能和图片选择功能，所以统一使用了Matisse。如果大家没对源码进行任何修改，则直接使用图片预览功能会报错，原因就是SelectionSpec的配置没有默认值，大家可以采用以下方式解决：</div><div class="line"></div><div class="line">一、 在使用预览功能之前对起配置进行设置</div></pre></td></tr></table></figure>
+</code></pre><p>这里我们就完成了Matisse的进程化，最后说下Matisse的细节问题。</p>
+<p>由于项目中有图片预览功能和图片选择功能，所以统一使用了Matisse。如果大家没对源码进行任何修改，则直接使用图片预览功能会报错，原因就是SelectionSpec的配置没有默认值，大家可以采用以下方式解决：</p>
+<p>一、 在使用预览功能之前对起配置进行设置</p>
 <pre><code>Matisse.from(MainActivity.this)
         .choose(MimeType.allOf())
         .countable(true)
@@ -263,8 +269,7 @@ private SelectionSpec() {
         .thumbnailScale(0.85f)
         .imageEngine(new GlideEngine())
         //最后无需发起跳转界面，也就是forResult()无需调用
-</code></pre><p>```</p>
-<p>二、 SelectionSpec对这个类的源码进行配置默认值的设置</p>
+</code></pre><p>二、 SelectionSpec对这个类的源码进行配置默认值的设置</p>
 <p>好了，Matisse进程化大概就这样了，有什么问题，请留言。</p>
 
       
