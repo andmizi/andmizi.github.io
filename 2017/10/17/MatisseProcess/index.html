@@ -160,26 +160,26 @@ public void onCreate() {
     CrashHandler.getInstance().init();
 }
 </code></pre><p>由于我们的应用以及多进程了，所以这里的初始化并不是每一个进程都需要用到的，所以我们建议修改为如下：</p>
-<pre><code> public static Context mApplicationContext;
+<pre><code>public static Context mApplicationContext;
 
-@Override
-public void onCreate() {
-    super.onCreate();
-    mApplicationContext = this.getApplicationContext();
+   @Override
+   public void onCreate() {
+       super.onCreate();
+       mApplicationContext = this.getApplicationContext();
     //如果是主进程，则开始初始化第三方sdk，因为这些sdk只有在主进程中才被使用到
-    if(AppUtils.isMainProcess(mApplicationContext)){
-        //x5内核初始化
-        //initX5();
-        //极光推送初始化
-        JPushInterface.init(mApplicationContext);
-        //初始化百度地图
-        SDKInitializer.initialize(mApplicationContext);
-    }
-    this.registerActivityLifecycleCallbacks(callbacks);
-    //全局异常捕获
-    MobclickAgent.setCatchUncaughtExceptions(false);
-    CrashHandler.getInstance().init();
-}
+       if(AppUtils.isMainProcess(mApplicationContext)){
+           //x5内核初始化
+           //initX5();
+           //极光推送初始化
+           JPushInterface.init(mApplicationContext);
+           //初始化百度地图
+           SDKInitializer.initialize(mApplicationContext);
+       }
+       this.registerActivityLifecycleCallbacks(callbacks);
+       //全局异常捕获
+       MobclickAgent.setCatchUncaughtExceptions(false);
+       CrashHandler.getInstance().init();
+   }
 </code></pre><h4 id="将Matisse进程化"><a href="#将Matisse进程化" class="headerlink" title="将Matisse进程化"></a>将Matisse进程化</h4><p>由于Matisse是开源的，所以我们需要下载他的源码并导入到Android Studio中，并在其上进行简单修改即可。</p>
 <p><img src="http://upload-images.jianshu.io/upload_images/2756952-7a7760ed9fbfb16a.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="微信图片_20171017135401.png"></p>
 <p>我们打开Matisse的AndroidManifest.xml修改代码如下：</p>
