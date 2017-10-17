@@ -1,0 +1,359 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+  <meta charset="utf-8">
+  
+  <title>将Matisse进程化 | kimi | 个人博客</title>
+
+  
+  <meta name="author" content="kimi">
+  
+
+  
+  <meta name="description" content="Here We Are Again">
+  
+
+  
+  
+  <meta name="keywords" content="多进程,内存优化">
+  
+
+  <meta id="viewport" name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, minimum-scale=1, user-scalable=no, minimal-ui">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black">
+
+  <meta property="og:title" content="将Matisse进程化"/>
+
+  <meta property="og:site_name" content="kimi"/>
+
+  
+  <meta property="og:image" content="/favicon.ico"/>
+  
+
+  <link href="/favicon.ico" rel="icon">
+  <link rel="alternate" href="/atom.xml" title="kimi" type="application/atom+xml">
+  <link rel="stylesheet" href="/css/style.css" media="screen" type="text/css">
+  
+</head>
+
+
+<body>
+<div class="blog">
+  <div class="content">
+
+    <header>
+  <embed src="/audio/童话镇.mp3" volume="10" autostart="true" loop="true" hidden="true" > </embed>
+  <div class="site-branding">
+	<div>
+		<img src="/images/kimi.jpg" style="border-radius:50%;"></img>
+	</div>
+    <h1 class="site-title">
+      <a href="/">kimi</a>
+    </h1>
+    <p class="site-description">个人博客</p>
+	
+	<p>
+	
+	<h1 class="site-title site-description" >
+		<a href="https://github.com/andmizi" target="_blank" >
+			Github
+		</a>
+		
+		<a href="http://www.jianshu.com/u/6edc22b4da83" target="_blank" >
+			Jianshu
+		</a>
+		
+		<a href="http://blog.csdn.net/qq_28268507?viewmode=list" target="_blank" >
+			CSDN
+		</a>
+	</h1>
+	
+    </p>
+  </div>
+ 
+  
+  <nav class="site-navigation">
+    <ul>
+      
+        <li><a href="/">主页</a></li>
+      
+        <li><a href="/archives">归档</a></li>
+      
+        <li><a href="/about">关于我</a></li>
+      
+        <li><a href="/links">友情链接</a></li>
+      
+    </ul>
+  </nav>
+</header>
+
+    <main class="site-main posts-loop">
+    <article>
+  
+    
+    <h3 class="article-title"><span>将Matisse进程化</span></h3>
+    
+  
+
+  <!--
+  <div class="article-top-meta">
+    <span class="posted-on">
+      <a href="/2017/10/17/MatisseProcess/" rel="bookmark">
+        <time class="entry-date published" datetime="2017-10-17T06:33:43.000Z">
+          2017-10-17
+        </time>
+      </a>
+    </span>
+  </div>
+  -->
+
+  
+
+  <div class="article-content">
+    <div class="entry">
+      
+        <h4 id="Matisse是什么？"><a href="#Matisse是什么？" class="headerlink" title="Matisse是什么？"></a>Matisse是什么？</h4><p>Matisse是知乎团队开源的一个设计良好的本地图片／视频文件选择库，支持不同的图片加载方式。</p>
+<p>先来张效果图，镇镇压。</p>
+<a id="more"></a>
+<p><img src="http://upload-images.jianshu.io/upload_images/2756952-788981338f7c48bd.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="1-1F42310521GC.png"></p>
+<p>具体的使用方法，参考官方Sample </p>
+<p>github 地址： <a href="https://github.com/zhihu/Matisse" target="_blank" rel="external">https://github.com/zhihu/Matisse</a></p>
+<h4 id="什么是多进程？为什么要多进程？"><a href="#什么是多进程？为什么要多进程？" class="headerlink" title="什么是多进程？为什么要多进程？"></a>什么是多进程？为什么要多进程？</h4><p>正常情况下，一个apk启动后就是一个进程，这是系统的默认行为，其进程名就是我们在AndroidManifest.xml配置的包名。多进程之间的内存是不可见的，所以这也是我们手机上运行某款app突然崩溃后，并没有影响到其他app的原因。不过我们可以使用android:process属性，来将我们的app配置成多进程。</p>
+<p>多进程的好处：</p>
+<ul>
+<li><p>减轻app负担，将内存均匀化。什么意思呢，我们知道Android系统对每个应用进程的内存占用是有限制的，而且占用内存越大的进程，通常被系统杀死的可能性越大。而让app多进程化，可以减少主进程所占用的内存，降低被系统杀死的概率；</p>
+</li>
+<li><p>如果子进程崩溃后，并不影响主进程，我们可以继续工作；</p>
+</li>
+</ul>
+<p>多进程的坏处：</p>
+<ul>
+<li>由于进程之间内存是不可见的，所以我们无法像平时一样正常的通讯。不过安卓已经提供了相应的跨进程之间通讯的技术，如AIDL，Messager，ContentProvider，Socket…等。这里不讨论具体的实现方案，大家可以自行百度；</li>
+</ul>
+<h4 id="微博App安卓客户端配置了5个进程："><a href="#微博App安卓客户端配置了5个进程：" class="headerlink" title="微博App安卓客户端配置了5个进程："></a>微博App安卓客户端配置了5个进程：</h4><p><img src="http://upload-images.jianshu.io/upload_images/2756952-922f6ca9d512b1fd.jpg?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="微信图片_20171017133353.jpg"></p>
+<h4 id="公司项目中安卓客户端进程化："><a href="#公司项目中安卓客户端进程化：" class="headerlink" title="公司项目中安卓客户端进程化："></a>公司项目中安卓客户端进程化：</h4><p><img src="http://upload-images.jianshu.io/upload_images/2756952-26d62db8eb69b072.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="微信图片_20171017133828.png"></p>
+<p>公司项目中配置了4个:</p>
+<ul>
+<li>com.shengda.extension 主进程</li>
+<li>com.shengda.extension:mult 子进程，极光推送后台服务</li>
+<li>com.shengda.extension:remote 子进程，百度地位后台服务</li>
+<li>com.shengda.extension:matisse 子进程，Matisse图片选择库</li>
+</ul>
+<h4 id="为什么需要把Matisse配置成单独进程？"><a href="#为什么需要把Matisse配置成单独进程？" class="headerlink" title="为什么需要把Matisse配置成单独进程？"></a>为什么需要把Matisse配置成单独进程？</h4><p>我们都知道图片在手机中是比较占用内存的，如果处理不好会很容易造成OOM而导致App崩溃的，所以这里对Matisse的简单修改，来达到应用的进程化；</p>
+<h4 id="应用多进程化的细节"><a href="#应用多进程化的细节" class="headerlink" title="应用多进程化的细节"></a>应用多进程化的细节</h4><p>当一个应用配置了多个进程后，那么Application会有多个，它和进程的数量是相对的。所以我们要注意下平时在Application所做的初始化工作。</p>
+<p>如下：</p>
+<pre><code>public static Context mApplicationContext;
+
+@Override
+public void onCreate() {
+    super.onCreate();
+    mApplicationContext = this.getApplicationContext();
+    //x5内核初始化
+    //initX5();
+    //极光推送初始化
+    JPushInterface.init(mApplicationContext);
+    //初始化百度地图
+    SDKInitializer.initialize(mApplicationContext);
+    this.registerActivityLifecycleCallbacks(callbacks);
+    //全局异常捕获
+    MobclickAgent.setCatchUncaughtExceptions(false);
+    CrashHandler.getInstance().init();
+}
+</code></pre><p>由于我们的应用以及多进程了，所以这里的初始化并不是每一个进程都需要用到的，所以我们建议修改为如下：</p>
+<pre><code> public static Context mApplicationContext;
+
+@Override
+public void onCreate() {
+    super.onCreate();
+    mApplicationContext = this.getApplicationContext();
+    //如果是主进程，则开始初始化第三方sdk，因为这些sdk只有在主进程中才被使用到
+    if(AppUtils.isMainProcess(mApplicationContext)){
+        //x5内核初始化
+        //initX5();
+        //极光推送初始化
+        JPushInterface.init(mApplicationContext);
+        //初始化百度地图
+        SDKInitializer.initialize(mApplicationContext);
+    }
+    this.registerActivityLifecycleCallbacks(callbacks);
+    //全局异常捕获
+    MobclickAgent.setCatchUncaughtExceptions(false);
+    CrashHandler.getInstance().init();
+}
+</code></pre><h4 id="将Matisse进程化"><a href="#将Matisse进程化" class="headerlink" title="将Matisse进程化"></a>将Matisse进程化</h4><p>由于Matisse是开源的，所以我们需要下载他的源码并导入到Android Studio中，并在其上进行简单修改即可。</p>
+<p><img src="http://upload-images.jianshu.io/upload_images/2756952-7a7760ed9fbfb16a.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="微信图片_20171017135401.png"></p>
+<p>我们打开Matisse的AndroidManifest.xml修改代码如下：</p>
+<pre><code>&lt;manifest
+    xmlns:android=&quot;http://schemas.android.com/apk/res/android&quot;
+    package=&quot;com.zhihu.matisse&quot;&gt;
+
+    &lt;uses-permission android:name=&quot;android.permission.WRITE_EXTERNAL_STORAGE&quot;/&gt;
+    &lt;uses-permission android:name=&quot;android.permission.READ_EXTERNAL_STORAGE&quot;/&gt;
+    //android:process 注意这个属性，也就是指定该进程的名称
+    &lt;application&gt;
+        &lt;activity android:name=&quot;com.zhihu.matisse.ui.MatisseActivity&quot; android:process=&quot;:matisse&quot;/&gt;
+        &lt;activity android:name=&quot;com.zhihu.matisse.internal.ui.AlbumPreviewActivity&quot; android:process=&quot;:matisse&quot;/&gt;
+        &lt;activity android:name=&quot;com.zhihu.matisse.internal.ui.SelectedPreviewActivity&quot; android:process=&quot;:matisse&quot;/&gt;
+    &lt;/application&gt;
+&lt;/manifest&gt;
+</code></pre><p>然后我们看下Matisse的使用：</p>
+<pre><code>Matisse.from(MainActivity.this)
+        .choose(MimeType.allOf())
+        .countable(true)
+        .maxSelectable(9)
+        .addFilter(new GifSizeFilter(320, 320, 5 * Filter.K * Filter.K))
+        .gridExpectedSize(getResources().getDimensionPixelSize(R.dimen.grid_expected_size))
+        .restrictOrientation(ActivityInfo.SCREEN_ORIENTATION_UNSPECIFIED)
+        .thumbnailScale(0.85f)
+        .imageEngine(new GlideEngine())
+        .forResult(REQUEST_CODE_CHOOSE);
+</code></pre><p>链式调用，进行了一些配置设置之后进行了startActivityForResult</p>
+<pre><code>public void forResult(int requestCode) {
+        Activity activity = mMatisse.getActivity();
+        if (activity == null) {
+            return;
+        }
+
+        Intent intent = new Intent(activity, MatisseActivity.class);
+
+        Fragment fragment = mMatisse.getFragment();
+        if (fragment != null) {
+            fragment.startActivityForResult(intent, requestCode);
+        } else {
+            activity.startActivityForResult(intent, requestCode);
+        }
+ }
+</code></pre><p>通过简单的阅读代码后，我们知道了大概的流程，所以我们只需要将那些配置参数转换为Bundle来进行intent传输，并取出最后进行设置即可。</p>
+<p>这里说下startActivityForResult 和 onActivityResult 是支持跨进程间的，所以这里我们无需其他的进程间通讯技术。</p>
+<p>修改后的代码：</p>
+<pre><code>//工具类，直接调用，跳转到图片选择界面，最后通过onActivityResult回调选中结果
+public static void openPhotoSlect(Activity activity, int maxSize) {
+        Bundle bundle = new Bundle();
+        bundle.putInt(&quot;maxSize&quot;,maxSize);
+        bundle.putBoolean(&quot;capture&quot;,false);
+
+        Matisse.from(activity)
+                .choose(MimeType.ofImage(), false)
+                .forResult(Constant.INTENT_MATISSE_REQUEST,bundle);
+}
+</code></pre><p>SelectionSpec源码配置参数设置，进行了一些初始值的设置：</p>
+<pre><code> public Set&lt;MimeType&gt; mimeTypeSet = MimeType.ofImage();
+public boolean mediaTypeExclusive;
+public boolean showSingleMediaType;
+@StyleRes
+public int themeId = R.style.Matisse_Zhihu;
+public int orientation = ActivityInfo.SCREEN_ORIENTATION_PORTRAIT;
+public boolean countable = true ;
+public int maxSelectable = 9;
+public List&lt;Filter&gt; filters = new ArrayList&lt;&gt;();
+public boolean capture;
+public CaptureStrategy captureStrategy = new CaptureStrategy(true, MatisseActivity.APPLICATION_CONTEXT.getPackageName() + &quot;.fileprovider&quot;);
+public int spanCount;
+public int gridExpectedSize = MatisseActivity.APPLICATION_CONTEXT.getResources().getDimensionPixelSize(R.dimen.grid_expected_size);
+public float thumbnailScale = 0.85f;
+public ImageEngine imageEngine = new GlideEngine();
+
+private SelectionSpec() {
+    filters.add(new GifSizeFilter(320, 320, 5 * Filter.K * Filter.K));
+}
+</code></pre><p>这里我们就完成了Matisse的进程化，最后说下Matisse的细节问题。</p>
+<p>由于项目中有图片预览功能和图片选择功能，所以统一使用了Matisse。如果大家没对源码进行任何修改，则直接使用图片预览功能会报错，原因就是SelectionSpec的配置没有默认值，大家可以采用以下方式解决：</p>
+<p>一、 在使用预览功能之前对起配置进行设置</p>
+<pre><code>Matisse.from(MainActivity.this)
+        .choose(MimeType.allOf())
+        .countable(true)
+        .maxSelectable(9)
+        .addFilter(new GifSizeFilter(320, 320, 5 * Filter.K * Filter.K))
+        .gridExpectedSize(getResources().getDimensionPixelSize(R.dimen.grid_expected_size))
+        .restrictOrientation(ActivityInfo.SCREEN_ORIENTATION_UNSPECIFIED)
+        .thumbnailScale(0.85f)
+        .imageEngine(new GlideEngine())
+        //最后无需发起跳转界面，也就是forResult()无需调用
+</code></pre><p>二、 SelectionSpec对这个类的源码进行配置默认值的设置</p>
+<p>好了，Matisse进程化大概就这样了，有什么问题，请留言。</p>
+
+      
+    </div>
+
+  </div>
+
+  <div class="article-footer">
+    <div class="article-meta pull-left">
+
+    
+      
+
+    <span class="post-categories">
+      <i class="icon-categories"></i>
+        <a href="/categories/android/">android</a>
+    </span>
+    
+
+    
+    
+
+    <span class="post-tags">
+      <i class="icon-tags"></i>
+        <a href="/tags/多进程/">多进程</a><a href="/tags/内存优化/">内存优化</a>
+    </span>
+    
+
+    </div>
+
+	<!-- 第三方评论 -->
+    
+  </div>
+</article>
+
+  
+	<div id="comment">
+		
+		
+	<div id="SOHUCS" sid="http://www.itkimi.com/2017/10/17/MatisseProcess/" ></div> 
+	<script type="text/javascript"> 
+	(function(){ 
+	var appid = 'cyt6iEBkx'; 
+	var conf = 'prod_46bee0d54fc91810c69f29fcca034697'; 
+	var width = window.innerWidth || document.documentElement.clientWidth; 
+	if (width < 960) { 
+	window.document.write('<script id="changyan_mobile_js" charset="utf-8" type="text/javascript" src="http://changyan.sohu.com/upload/mobile/wap-js/changyan_mobile.js?client_id=' + appid + '&conf=' + conf + '"><\/script>'); } else { var loadJs=function(d,a){var c=document.getElementsByTagName("head")[0]||document.head||document.documentElement;var b=document.createElement("script");b.setAttribute("type","text/javascript");b.setAttribute("charset","UTF-8");b.setAttribute("src",d);if(typeof a==="function"){if(window.attachEvent){b.onreadystatechange=function(){var e=b.readyState;if(e==="loaded"||e==="complete"){b.onreadystatechange=null;a()}}}else{b.onload=a}}c.appendChild(b)};loadJs("http://changyan.sohu.com/upload/changyan.js",function(){window.changyan.api.config({appid:appid,conf:conf})}); } })(); </script>
+		
+		
+	<!--
+	
+	 <div class="ds-thread" data-thread-key="/2017/10/17/MatisseProcess/" data-title="将Matisse进程化" data-url="http://www.itkimi.com/2017/10/17/MatisseProcess/"></div>
+	
+	-->
+	</div>
+
+
+
+
+    </main>
+
+    <footer class="site-footer">
+ 
+  <div>
+	 <a class="bshareDiv" href="http://www.bshare.cn/share">分享按钮</a><script type="text/javascript" charset="utf-8" src="http://static.bshare.cn/b/buttonLite.js#uuid=&amp;style=5&amp;fs=4&amp;bgcolor=Purple"></script>
+  </div>
+  
+  <div>
+	<script type="text/javascript">var cnzz_protocol = (("https:" == document.location.protocol) ? " https://" : " http://");document.write(unescape("%3Cspan id='cnzz_stat_icon_1262826986'%3E%3C/span%3E%3Cscript src='" + cnzz_protocol + "s19.cnzz.com/stat.php%3Fid%3D1262826986%26online%3D1%26show%3Dline' type='text/javascript'%3E%3C/script%3E"));</script>
+  </div>
+
+  <p class="site-info">
+    本站由 <a href="https://hexo.io/" target="_blank">Hexo</a> 
+    技术驱动，主题采用 <a href="https://github.com/CodeDaraW/Hacker" target="_blank">Hacker</a>
+    </br>
+    
+    &copy; 2017 kimi
+    
+	</br>
+	豫ICP证: <a href="http://www.miitbeian.gov.cn/" target="_blank">17020696</a> 号
+  </p>
+</footer>
+    
+  </div>
+</div>
+</body>
+</html>
