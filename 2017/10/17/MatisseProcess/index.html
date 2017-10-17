@@ -142,134 +142,28 @@
 <h4 id="为什么需要把Matisse配置成单独进程？"><a href="#为什么需要把Matisse配置成单独进程？" class="headerlink" title="为什么需要把Matisse配置成单独进程？"></a>为什么需要把Matisse配置成单独进程？</h4><p>我们都知道图片在手机中是比较占用内存的，如果处理不好会很容易造成OOM而导致App崩溃的，所以这里对Matisse的简单修改，来达到应用的进程化；</p>
 <h4 id="应用多进程化的细节"><a href="#应用多进程化的细节" class="headerlink" title="应用多进程化的细节"></a>应用多进程化的细节</h4><p>当一个应用配置了多个进程后，那么Application会有多个，它和进程的数量是相对的。所以我们要注意下平时在Application所做的初始化工作。</p>
 <p>如下：</p>
-<pre><code>public static Context mApplicationContext;
-
-@Override
-public void onCreate() {
-    super.onCreate();
-    mApplicationContext = this.getApplicationContext();
-    //x5内核初始化
-    //initX5();
-    //极光推送初始化
-    JPushInterface.init(mApplicationContext);
-    //初始化百度地图
-    SDKInitializer.initialize(mApplicationContext);
-    this.registerActivityLifecycleCallbacks(callbacks);
-    //全局异常捕获
-    MobclickAgent.setCatchUncaughtExceptions(false);
-    CrashHandler.getInstance().init();
-}
-</code></pre><p>由于我们的应用以及多进程了，所以这里的初始化并不是每一个进程都需要用到的，所以我们建议修改为如下：</p>
-<pre><code> public static Context mApplicationContext;
-
-@Override
-public void onCreate() {
-    super.onCreate();
-    mApplicationContext = this.getApplicationContext();
-    //如果是主进程，则开始初始化第三方sdk，因为这些sdk只有在主进程中才被使用到
-    if(AppUtils.isMainProcess(mApplicationContext)){
-        //x5内核初始化
-        //initX5();
-        //极光推送初始化
-        JPushInterface.init(mApplicationContext);
-        //初始化百度地图
-        SDKInitializer.initialize(mApplicationContext);
-    }
-    this.registerActivityLifecycleCallbacks(callbacks);
-    //全局异常捕获
-    MobclickAgent.setCatchUncaughtExceptions(false);
-    CrashHandler.getInstance().init();
-}
-</code></pre><h4 id="将Matisse进程化"><a href="#将Matisse进程化" class="headerlink" title="将Matisse进程化"></a>将Matisse进程化</h4><p>由于Matisse是开源的，所以我们需要下载他的源码并导入到Android Studio中，并在其上进行简单修改即可。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div></pre></td><td class="code"><pre><div class="line">public static Context mApplicationContext;</div><div class="line">	</div><div class="line">	@Override</div><div class="line">	public void onCreate() &#123;</div><div class="line">	    super.onCreate();</div><div class="line">	    mApplicationContext = this.getApplicationContext();</div><div class="line">	    //x5内核初始化</div><div class="line">	    //initX5();</div><div class="line">	    //极光推送初始化</div><div class="line">	    JPushInterface.init(mApplicationContext);</div><div class="line">	    //初始化百度地图</div><div class="line">	    SDKInitializer.initialize(mApplicationContext);</div><div class="line">	    this.registerActivityLifecycleCallbacks(callbacks);</div><div class="line">	    //全局异常捕获</div><div class="line">	    MobclickAgent.setCatchUncaughtExceptions(false);</div><div class="line">	    CrashHandler.getInstance().init();</div><div class="line">	&#125;</div></pre></td></tr></table></figure>
+<p>由于我们的应用以及多进程了，所以这里的初始化并不是每一个进程都需要用到的，所以我们建议修改为如下：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div></pre></td><td class="code"><pre><div class="line">public static Context mApplicationContext;</div><div class="line">	</div><div class="line">  @Override</div><div class="line">  public void onCreate() &#123;</div><div class="line">      super.onCreate();</div><div class="line">      mApplicationContext = this.getApplicationContext();</div><div class="line">//如果是主进程，则开始初始化第三方sdk，因为这些sdk只有在主进程中才被使用到</div><div class="line">      if(AppUtils.isMainProcess(mApplicationContext))&#123;</div><div class="line">          //x5内核初始化</div><div class="line">          //initX5();</div><div class="line">          //极光推送初始化</div><div class="line">          JPushInterface.init(mApplicationContext);</div><div class="line">          //初始化百度地图</div><div class="line">          SDKInitializer.initialize(mApplicationContext);</div><div class="line">      &#125;</div><div class="line">      this.registerActivityLifecycleCallbacks(callbacks);</div><div class="line">      //全局异常捕获</div><div class="line">      MobclickAgent.setCatchUncaughtExceptions(false);</div><div class="line">      CrashHandler.getInstance().init();</div><div class="line">  &#125;</div></pre></td></tr></table></figure>
+<h4 id="将Matisse进程化"><a href="#将Matisse进程化" class="headerlink" title="将Matisse进程化"></a>将Matisse进程化</h4><p>由于Matisse是开源的，所以我们需要下载他的源码并导入到Android Studio中，并在其上进行简单修改即可。</p>
 <p><img src="http://upload-images.jianshu.io/upload_images/2756952-7a7760ed9fbfb16a.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="微信图片_20171017135401.png"></p>
 <p>我们打开Matisse的AndroidManifest.xml修改代码如下：</p>
-<pre><code>&lt;manifest
-    xmlns:android=&quot;http://schemas.android.com/apk/res/android&quot;
-    package=&quot;com.zhihu.matisse&quot;&gt;
-
-    &lt;uses-permission android:name=&quot;android.permission.WRITE_EXTERNAL_STORAGE&quot;/&gt;
-    &lt;uses-permission android:name=&quot;android.permission.READ_EXTERNAL_STORAGE&quot;/&gt;
-    //android:process 注意这个属性，也就是指定该进程的名称
-    &lt;application&gt;
-        &lt;activity android:name=&quot;com.zhihu.matisse.ui.MatisseActivity&quot; android:process=&quot;:matisse&quot;/&gt;
-        &lt;activity android:name=&quot;com.zhihu.matisse.internal.ui.AlbumPreviewActivity&quot; android:process=&quot;:matisse&quot;/&gt;
-        &lt;activity android:name=&quot;com.zhihu.matisse.internal.ui.SelectedPreviewActivity&quot; android:process=&quot;:matisse&quot;/&gt;
-    &lt;/application&gt;
-&lt;/manifest&gt;
-</code></pre><p>然后我们看下Matisse的使用：</p>
-<pre><code>Matisse.from(MainActivity.this)
-        .choose(MimeType.allOf())
-        .countable(true)
-        .maxSelectable(9)
-        .addFilter(new GifSizeFilter(320, 320, 5 * Filter.K * Filter.K))
-        .gridExpectedSize(getResources().getDimensionPixelSize(R.dimen.grid_expected_size))
-        .restrictOrientation(ActivityInfo.SCREEN_ORIENTATION_UNSPECIFIED)
-        .thumbnailScale(0.85f)
-        .imageEngine(new GlideEngine())
-        .forResult(REQUEST_CODE_CHOOSE);
-</code></pre><p>链式调用，进行了一些配置设置之后进行了startActivityForResult</p>
-<pre><code>public void forResult(int requestCode) {
-        Activity activity = mMatisse.getActivity();
-        if (activity == null) {
-            return;
-        }
-
-        Intent intent = new Intent(activity, MatisseActivity.class);
-
-        Fragment fragment = mMatisse.getFragment();
-        if (fragment != null) {
-            fragment.startActivityForResult(intent, requestCode);
-        } else {
-            activity.startActivityForResult(intent, requestCode);
-        }
- }
-</code></pre><p>通过简单的阅读代码后，我们知道了大概的流程，所以我们只需要将那些配置参数转换为Bundle来进行intent传输，并取出最后进行设置即可。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div></pre></td><td class="code"><pre><div class="line">&lt;manifest</div><div class="line">    xmlns:android=&quot;http://schemas.android.com/apk/res/android&quot;</div><div class="line">    package=&quot;com.zhihu.matisse&quot;&gt;</div><div class="line"></div><div class="line">    &lt;uses-permission android:name=&quot;android.permission.WRITE_EXTERNAL_STORAGE&quot;/&gt;</div><div class="line">    &lt;uses-permission android:name=&quot;android.permission.READ_EXTERNAL_STORAGE&quot;/&gt;</div><div class="line">	//android:process 注意这个属性，也就是指定该进程的名称</div><div class="line">    &lt;application&gt;</div><div class="line">        &lt;activity android:name=&quot;com.zhihu.matisse.ui.MatisseActivity&quot; android:process=&quot;:matisse&quot;/&gt;</div><div class="line">        &lt;activity android:name=&quot;com.zhihu.matisse.internal.ui.AlbumPreviewActivity&quot; android:process=&quot;:matisse&quot;/&gt;</div><div class="line">        &lt;activity android:name=&quot;com.zhihu.matisse.internal.ui.SelectedPreviewActivity&quot; android:process=&quot;:matisse&quot;/&gt;</div><div class="line">    &lt;/application&gt;</div><div class="line">&lt;/manifest&gt;</div></pre></td></tr></table></figure>
+<p>然后我们看下Matisse的使用：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div></pre></td><td class="code"><pre><div class="line">Matisse.from(MainActivity.this)</div><div class="line">        .choose(MimeType.allOf())</div><div class="line">        .countable(true)</div><div class="line">        .maxSelectable(9)</div><div class="line">        .addFilter(new GifSizeFilter(320, 320, 5 * Filter.K * Filter.K))</div><div class="line">        .gridExpectedSize(getResources().getDimensionPixelSize(R.dimen.grid_expected_size))</div><div class="line">        .restrictOrientation(ActivityInfo.SCREEN_ORIENTATION_UNSPECIFIED)</div><div class="line">        .thumbnailScale(0.85f)</div><div class="line">        .imageEngine(new GlideEngine())</div><div class="line">        .forResult(REQUEST_CODE_CHOOSE);</div></pre></td></tr></table></figure>
+<p>链式调用，进行了一些配置设置之后进行了startActivityForResult</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div></pre></td><td class="code"><pre><div class="line">public void forResult(int requestCode) &#123;</div><div class="line">        Activity activity = mMatisse.getActivity();</div><div class="line">        if (activity == null) &#123;</div><div class="line">            return;</div><div class="line">        &#125;</div><div class="line"></div><div class="line">        Intent intent = new Intent(activity, MatisseActivity.class);</div><div class="line"></div><div class="line">        Fragment fragment = mMatisse.getFragment();</div><div class="line">        if (fragment != null) &#123;</div><div class="line">            fragment.startActivityForResult(intent, requestCode);</div><div class="line">        &#125; else &#123;</div><div class="line">            activity.startActivityForResult(intent, requestCode);</div><div class="line">        &#125;</div><div class="line"> &#125;</div></pre></td></tr></table></figure>
+<p>通过简单的阅读代码后，我们知道了大概的流程，所以我们只需要将那些配置参数转换为Bundle来进行intent传输，并取出最后进行设置即可。</p>
 <p>这里说下startActivityForResult 和 onActivityResult 是支持跨进程间的，所以这里我们无需其他的进程间通讯技术。</p>
 <p>修改后的代码：</p>
-<pre><code>//工具类，直接调用，跳转到图片选择界面，最后通过onActivityResult回调选中结果
-public static void openPhotoSlect(Activity activity, int maxSize) {
-        Bundle bundle = new Bundle();
-        bundle.putInt(&quot;maxSize&quot;,maxSize);
-        bundle.putBoolean(&quot;capture&quot;,false);
-
-        Matisse.from(activity)
-                .choose(MimeType.ofImage(), false)
-                .forResult(Constant.INTENT_MATISSE_REQUEST,bundle);
-}
-</code></pre><p>SelectionSpec源码配置参数设置，进行了一些初始值的设置：</p>
-<pre><code> public Set&lt;MimeType&gt; mimeTypeSet = MimeType.ofImage();
-public boolean mediaTypeExclusive;
-public boolean showSingleMediaType;
-@StyleRes
-public int themeId = R.style.Matisse_Zhihu;
-public int orientation = ActivityInfo.SCREEN_ORIENTATION_PORTRAIT;
-public boolean countable = true ;
-public int maxSelectable = 9;
-public List&lt;Filter&gt; filters = new ArrayList&lt;&gt;();
-public boolean capture;
-public CaptureStrategy captureStrategy = new CaptureStrategy(true, MatisseActivity.APPLICATION_CONTEXT.getPackageName() + &quot;.fileprovider&quot;);
-public int spanCount;
-public int gridExpectedSize = MatisseActivity.APPLICATION_CONTEXT.getResources().getDimensionPixelSize(R.dimen.grid_expected_size);
-public float thumbnailScale = 0.85f;
-public ImageEngine imageEngine = new GlideEngine();
-
-private SelectionSpec() {
-    filters.add(new GifSizeFilter(320, 320, 5 * Filter.K * Filter.K));
-}
-</code></pre><p>这里我们就完成了Matisse的进程化，最后说下Matisse的细节问题。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div></pre></td><td class="code"><pre><div class="line">//工具类，直接调用，跳转到图片选择界面，最后通过onActivityResult回调选中结果</div><div class="line">public static void openPhotoSlect(Activity activity, int maxSize) &#123;</div><div class="line">        Bundle bundle = new Bundle();</div><div class="line">        bundle.putInt(&quot;maxSize&quot;,maxSize);</div><div class="line">        bundle.putBoolean(&quot;capture&quot;,false);</div><div class="line"></div><div class="line">        Matisse.from(activity)</div><div class="line">                .choose(MimeType.ofImage(), false)</div><div class="line">                .forResult(Constant.INTENT_MATISSE_REQUEST,bundle);</div><div class="line">   &#125;</div></pre></td></tr></table></figure>
+<p>SelectionSpec源码配置参数设置，进行了一些初始值的设置：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div></pre></td><td class="code"><pre><div class="line">public Set&lt;MimeType&gt; mimeTypeSet = MimeType.ofImage();</div><div class="line">  public boolean mediaTypeExclusive;</div><div class="line">  public boolean showSingleMediaType;</div><div class="line">  @StyleRes</div><div class="line">  public int themeId = R.style.Matisse_Zhihu;</div><div class="line">  public int orientation = ActivityInfo.SCREEN_ORIENTATION_PORTRAIT;</div><div class="line">  public boolean countable = true ;</div><div class="line">  public int maxSelectable = 9;</div><div class="line">  public List&lt;Filter&gt; filters = new ArrayList&lt;&gt;();</div><div class="line">  public boolean capture;</div><div class="line">  public CaptureStrategy captureStrategy = new CaptureStrategy(true, MatisseActivity.APPLICATION_CONTEXT.getPackageName() + &quot;.fileprovider&quot;);</div><div class="line">  public int spanCount;</div><div class="line">  public int gridExpectedSize = MatisseActivity.APPLICATION_CONTEXT.getResources().getDimensionPixelSize(R.dimen.grid_expected_size);</div><div class="line">  public float thumbnailScale = 0.85f;</div><div class="line">  public ImageEngine imageEngine = new GlideEngine();</div><div class="line"></div><div class="line">  private SelectionSpec() &#123;</div><div class="line">      filters.add(new GifSizeFilter(320, 320, 5 * Filter.K * Filter.K));</div><div class="line">  &#125;</div></pre></td></tr></table></figure>
+<p>这里我们就完成了Matisse的进程化，最后说下Matisse的细节问题。</p>
 <p>由于项目中有图片预览功能和图片选择功能，所以统一使用了Matisse。如果大家没对源码进行任何修改，则直接使用图片预览功能会报错，原因就是SelectionSpec的配置没有默认值，大家可以采用以下方式解决：</p>
 <p>一、 在使用预览功能之前对起配置进行设置</p>
-<pre><code>Matisse.from(MainActivity.this)
-        .choose(MimeType.allOf())
-        .countable(true)
-        .maxSelectable(9)
-        .addFilter(new GifSizeFilter(320, 320, 5 * Filter.K * Filter.K))
-        .gridExpectedSize(getResources().getDimensionPixelSize(R.dimen.grid_expected_size))
-        .restrictOrientation(ActivityInfo.SCREEN_ORIENTATION_UNSPECIFIED)
-        .thumbnailScale(0.85f)
-        .imageEngine(new GlideEngine())
-        //最后无需发起跳转界面，也就是forResult()无需调用
-</code></pre><p>二、 SelectionSpec对这个类的源码进行配置默认值的设置</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div></pre></td><td class="code"><pre><div class="line">Matisse.from(MainActivity.this)</div><div class="line">        .choose(MimeType.allOf())</div><div class="line">        .countable(true)</div><div class="line">        .maxSelectable(9)</div><div class="line">        .addFilter(new GifSizeFilter(320, 320, 5 * Filter.K * Filter.K))</div><div class="line">        .gridExpectedSize(getResources().getDimensionPixelSize(R.dimen.grid_expected_size))</div><div class="line">        .restrictOrientation(ActivityInfo.SCREEN_ORIENTATION_UNSPECIFIED)</div><div class="line">        .thumbnailScale(0.85f)</div><div class="line">        .imageEngine(new GlideEngine())</div><div class="line">        //最后无需发起跳转界面，也就是forResult()无需调用</div></pre></td></tr></table></figure>
+<p>二、 SelectionSpec对这个类的源码进行配置默认值的设置</p>
 <p>好了，Matisse进程化大概就这样了，有什么问题，请留言。</p>
 
       
