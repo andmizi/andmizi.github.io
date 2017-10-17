@@ -154,7 +154,7 @@ public void onCreate() {
     JPushInterface.init(mApplicationContext);
     //初始化百度地图
     SDKInitializer.initialize(mApplicationContext);
-    this.registerActivityLifecycleCallbacks(callbacks);
+     this.registerActivityLifecycleCallbacks(callbacks);
     //全局异常捕获
     MobclickAgent.setCatchUncaughtExceptions(false);
     CrashHandler.getInstance().init();
@@ -189,7 +189,7 @@ public void onCreate() {
 
     &lt;uses-permission android:name=&quot;android.permission.WRITE_EXTERNAL_STORAGE&quot;/&gt;
     &lt;uses-permission android:name=&quot;android.permission.READ_EXTERNAL_STORAGE&quot;/&gt;
-//android:process 注意这个属性，也就是指定该进程的名称
+    //android:process 注意这个属性，也就是指定该进程的名称
     &lt;application&gt;
         &lt;activity android:name=&quot;com.zhihu.matisse.ui.MatisseActivity&quot; android:process=&quot;:matisse&quot;/&gt;
         &lt;activity android:name=&quot;com.zhihu.matisse.internal.ui.AlbumPreviewActivity&quot; android:process=&quot;:matisse&quot;/&gt;
