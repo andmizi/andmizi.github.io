@@ -142,8 +142,24 @@
 <h4 id="为什么需要把Matisse配置成单独进程？"><a href="#为什么需要把Matisse配置成单独进程？" class="headerlink" title="为什么需要把Matisse配置成单独进程？"></a>为什么需要把Matisse配置成单独进程？</h4><p>我们都知道图片在手机中是比较占用内存的，如果处理不好会很容易造成OOM而导致App崩溃的，所以这里对Matisse的简单修改，来达到应用的进程化；</p>
 <h4 id="应用多进程化的细节"><a href="#应用多进程化的细节" class="headerlink" title="应用多进程化的细节"></a>应用多进程化的细节</h4><p>当一个应用配置了多个进程后，那么Application会有多个，它和进程的数量是相对的。所以我们要注意下平时在Application所做的初始化工作。</p>
 <p>如下：</p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div></pre></td><td class="code"><pre><div class="line"></div><div class="line"><span class="keyword">public</span> <span class="keyword">static</span> Context mApplicationContext;</div><div class="line">	</div><div class="line"><span class="meta">@Override</span></div><div class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">onCreate</span><span class="params">()</span> </span>&#123;</div><div class="line">	<span class="keyword">super</span>.onCreate();</div><div class="line">	mApplicationContext = <span class="keyword">this</span>.getApplicationContext();</div><div class="line">	<span class="comment">//x5内核初始化</span></div><div class="line">	<span class="comment">//initX5();</span></div><div class="line">	<span class="comment">//极光推送初始化</span></div><div class="line">	JPushInterface.init(mApplicationContext);</div><div class="line">	<span class="comment">//初始化百度地图</span></div><div class="line">	SDKInitializer.initialize(mApplicationContext);</div><div class="line">    <span class="keyword">this</span>.registerActivityLifecycleCallbacks(callbacks);</div><div class="line">	<span class="comment">//全局异常捕获</span></div><div class="line">	MobclickAgent.setCatchUncaughtExceptions(<span class="keyword">false</span>);</div><div class="line">	CrashHandler.getInstance().init();</div><div class="line">&#125;</div></pre></td></tr></table></figure>
-<p>由于我们的应用以及多进程了，所以这里的初始化并不是每一个进程都需要用到的，所以我们建议修改为如下：</p>
+<pre><code>public static Context mApplicationContext;
+
+@Override
+public void onCreate() {
+    super.onCreate();
+    mApplicationContext = this.getApplicationContext();
+    //x5内核初始化
+    //initX5();
+    //极光推送初始化
+    JPushInterface.init(mApplicationContext);
+    //初始化百度地图
+    SDKInitializer.initialize(mApplicationContext);
+    this.registerActivityLifecycleCallbacks(callbacks);
+    //全局异常捕获
+    MobclickAgent.setCatchUncaughtExceptions(false);
+    CrashHandler.getInstance().init();
+}
+</code></pre><p>由于我们的应用以及多进程了，所以这里的初始化并不是每一个进程都需要用到的，所以我们建议修改为如下：</p>
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div></pre></td><td class="code"><pre><div class="line">public static Context mApplicationContext;</div><div class="line">	</div><div class="line">  @Override</div><div class="line">  public void onCreate() &#123;</div><div class="line">      super.onCreate();</div><div class="line">      mApplicationContext = this.getApplicationContext();</div><div class="line">//如果是主进程，则开始初始化第三方sdk，因为这些sdk只有在主进程中才被使用到</div><div class="line">      if(AppUtils.isMainProcess(mApplicationContext))&#123;</div><div class="line">          //x5内核初始化</div><div class="line">          //initX5();</div><div class="line">          //极光推送初始化</div><div class="line">          JPushInterface.init(mApplicationContext);</div><div class="line">          //初始化百度地图</div><div class="line">          SDKInitializer.initialize(mApplicationContext);</div><div class="line">      &#125;</div><div class="line">      this.registerActivityLifecycleCallbacks(callbacks);</div><div class="line">      //全局异常捕获</div><div class="line">      MobclickAgent.setCatchUncaughtExceptions(false);</div><div class="line">      CrashHandler.getInstance().init();</div><div class="line">  &#125;</div></pre></td></tr></table></figure>
 <h4 id="将Matisse进程化"><a href="#将Matisse进程化" class="headerlink" title="将Matisse进程化"></a>将Matisse进程化</h4><p>由于Matisse是开源的，所以我们需要下载他的源码并导入到Android Studio中，并在其上进行简单修改即可。</p>
 <p><img src="http://upload-images.jianshu.io/upload_images/2756952-7a7760ed9fbfb16a.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="微信图片_20171017135401.png"></p>
