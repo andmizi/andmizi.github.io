@@ -158,7 +158,7 @@ public void onCreate() {
     //全局异常捕获
     MobclickAgent.setCatchUncaughtExceptions(false);
     CrashHandler.getInstance().init();
-}
+}```
 </code></pre><p>由于我们的应用以及多进程了，所以这里的初始化并不是每一个进程都需要用到的，所以我们建议修改为如下：</p>
 <pre><code>public static Context mApplicationContext;
 
