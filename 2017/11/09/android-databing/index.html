@@ -1,0 +1,453 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+  <meta charset="utf-8">
+  
+  <title>Android DataBinding语法规范 | kimi | 个人博客</title>
+
+  
+  <meta name="author" content="kimi">
+  
+
+  
+  <meta name="description" content="Here We Are Again">
+  
+
+  
+  
+  <meta name="keywords" content="DataBinding,安卓">
+  
+
+  <meta id="viewport" name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, minimum-scale=1, user-scalable=no, minimal-ui">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black">
+
+  <meta property="og:title" content="Android DataBinding语法规范"/>
+
+  <meta property="og:site_name" content="kimi"/>
+
+  
+  <meta property="og:image" content="/favicon.ico"/>
+  
+
+  <link href="/favicon.ico" rel="icon">
+  <link rel="alternate" href="/atom.xml" title="kimi" type="application/atom+xml">
+  <link rel="stylesheet" href="/css/style.css" media="screen" type="text/css">
+  
+</head>
+
+
+<body>
+<div class="blog">
+  <div class="content">
+
+    <header>
+  <embed src="/audio/童话镇.mp3" volume="10" autostart="true" loop="true" hidden="true" > </embed>
+  <div class="site-branding">
+	<div>
+		<img src="/images/kimi.jpg" style="border-radius:50%;"></img>
+	</div>
+    <h1 class="site-title">
+      <a href="/">kimi</a>
+    </h1>
+    <p class="site-description">个人博客</p>
+	
+	<p>
+	
+	<h1 class="site-title site-description" >
+		<a href="https://github.com/andmizi" target="_blank" >
+			Github
+		</a>
+		
+		<a href="http://www.jianshu.com/u/6edc22b4da83" target="_blank" >
+			Jianshu
+		</a>
+		
+		<a href="http://blog.csdn.net/qq_28268507?viewmode=list" target="_blank" >
+			CSDN
+		</a>
+	</h1>
+	
+    </p>
+  </div>
+ 
+  
+  <nav class="site-navigation">
+    <ul>
+      
+        <li><a href="/">主页</a></li>
+      
+        <li><a href="/archives">归档</a></li>
+      
+        <li><a href="/about">关于我</a></li>
+      
+        <li><a href="/links">友情链接</a></li>
+      
+    </ul>
+  </nav>
+</header>
+
+    <main class="site-main posts-loop">
+    <article>
+  
+    
+    <h3 class="article-title"><span>Android DataBinding语法规范</span></h3>
+    
+  
+
+  <!--
+  <div class="article-top-meta">
+    <span class="posted-on">
+      <a href="/2017/11/09/android-databing/" rel="bookmark">
+        <time class="entry-date published" datetime="2017-11-09T02:36:18.000Z">
+          2017-11-09
+        </time>
+      </a>
+    </span>
+  </div>
+  -->
+
+  
+
+  <div class="article-content">
+    <div class="entry">
+      
+        <h4 id="Android-DataBinding语法规范"><a href="#Android-DataBinding语法规范" class="headerlink" title="Android DataBinding语法规范"></a>Android DataBinding语法规范</h4><h4 id="基本用法："><a href="#基本用法：" class="headerlink" title="基本用法："></a>基本用法：</h4><pre><code>&lt;layout xmlns:android=&quot;http://schemas.android.com/apk/res/android&quot;
+    xmlns:app=&quot;http://schemas.android.com/apk/res-auto&quot;&gt;
+    //class属性定义了DataBinding的类型，如果使用了class属性，则不在根据layout名称生成相应DataBinding了
+    &lt;data class=&quot;.ContractBinding&quot;&gt; 
+        //import标签导包，alias 表示别名
+        &lt;import type=&quot;com.liangfeizc.databinding.model.User&quot;/&gt;
+        &lt;import type=&quot;com.liangfeizc.databinding.utils.MyStringUtils&quot; alias=&quot;StringUtils&quot; /&gt;
+        &lt;import type=&quot;android.view.View&quot; /&gt;
+
+        &lt;variable name=&quot;user&quot; type=&quot;User&quot; /&gt;
+    &lt;/data&gt;
+&lt;/layout&gt;
+</code></pre><a id="more"></a>
+<h4 id="基本语法："><a href="#基本语法：" class="headerlink" title="基本语法："></a>基本语法：</h4><pre><code>android:visibility=&quot;@{user.isAdult ? View.VISIBLE : View.GONE}&quot;//支持三元运算符。需要导入View包
+android:text=&quot;@{String.valueOf(user.age)}&quot;//前面说了，@{只能是String}，为什么，可以看3.1，匹配规则
+android:text=&quot;@{StringUtils.capitalize(user.firstName)}&quot;//前面导入了这个包，可以调用这个静态方法
+android:text=&quot;@{user.displayName ?? user.lastName}&quot;//它表达的是如果左边不是 null 的，那么使用左边的值，否者使用右边的值。在棉花糖的文章里有介绍
+android:background=&quot;@{isError.get() ? @color/red : @color/white}&quot;//三目运算符
+</code></pre><h4 id="include布局时变量的传递："><a href="#include布局时变量的传递：" class="headerlink" title="include布局时变量的传递："></a>include布局时变量的传递：</h4><pre><code>&lt;layout xmlns:android=&quot;http://schemas.android.com/apk/res/android&quot;
+    //名称空间
+    xmlns:bind=&quot;http://schemas.android.com/apk/res-auto&quot;&gt;
+
+    &lt;data&gt;
+
+        &lt;import type=&quot;com.liangfeizc.databinding.model.User&quot; /&gt;
+        &lt;variable
+            name=&quot;user&quot;
+            type=&quot;User&quot; /&gt;
+        &lt;variable
+            name=&quot;listener&quot;
+            type=&quot;com.liangfeizc.databinding.listener.OkListener&quot; /&gt;
+        &lt;variable
+            name=&quot;okText&quot;
+            type=&quot;String&quot; /&gt;
+    &lt;/data&gt;
+
+    &lt;LinearLayout
+        android:layout_width=&quot;match_parent&quot;
+        android:layout_height=&quot;match_parent&quot;
+        android:orientation=&quot;vertical&quot;&gt;
+
+        &lt;include
+            android:id=&quot;@+id/layout_input&quot;
+            layout=&quot;@layout/layout_input&quot; /&gt;
+
+        &lt;include
+        //注意：bind为名称空间，user为布局中的一个相同类型的变量名
+            layout=&quot;@layout/user&quot;
+            bind:user=&quot;@{user}&quot; /&gt;
+
+        &lt;include
+        //注意：这里okText，listener都在layout_btn_ok布局中存在相同的变量名，并且类型也要保持一致
+            layout=&quot;@layout/layout_btn_ok&quot;
+            bind:okText=&quot;@{okText}&quot;
+            bind:listener=&quot;@{listener}&quot;/&gt;
+    &lt;/LinearLayout&gt;
+&lt;/layout&gt;
+</code></pre><h4 id="集合使用："><a href="#集合使用：" class="headerlink" title="集合使用："></a>集合使用：</h4><pre><code> &lt;data class=&quot;CollectionsBinding&quot;&gt;
+    &lt;import type=&quot;java.util.Map&quot; /&gt;
+    &lt;import type=&quot;java.util.List&quot; /&gt;
+    &lt;import type=&quot;android.util.SparseArray&quot; /&gt;
+
+    //List&amp;lt;String表示List里面的值为String类型
+    &lt;variable name=&quot;list&quot; type=&quot;List&amp;lt;String&gt;&quot; /&gt;
+    &lt;variable name=&quot;sparse&quot; type=&quot;SparseArray&amp;lt;String&gt;&quot;/&gt;
+
+    //Map&amp;lt;String, String表示，map中key，value的值都是String类型的
+    &lt;variable name=&quot;map&quot; type=&quot;Map&amp;lt;String, String&gt;&quot;/&gt;
+
+    //position，默认为0，需要的时候请手动设置
+    &lt;variable name=&quot;index&quot; type=&quot;int&quot; /&gt;
+    &lt;variable name=&quot;key&quot; type=&quot;String&quot; /&gt;
+&lt;/data&gt;
+&lt;LinearLayout
+    android:layout_width=&quot;match_parent&quot;
+    android:layout_height=&quot;match_parent&quot;
+    android:orientation=&quot;vertical&quot;
+    android:paddingBottom=&quot;@dimen/activity_vertical_margin&quot;
+    android:paddingLeft=&quot;@dimen/activity_horizontal_margin&quot;
+    android:paddingRight=&quot;@dimen/activity_horizontal_margin&quot;
+    android:paddingTop=&quot;@dimen/activity_vertical_margin&quot;&gt;
+
+    &lt;TextView
+        android:layout_width=&quot;wrap_content&quot;
+        android:layout_height=&quot;wrap_content&quot;
+        android:textStyle=&quot;bold&quot;
+        android:text=&quot;list[index]:&quot; /&gt;
+    &lt;TextView
+        android:text=&quot;@{list[index]}&quot;
+        android:layout_width=&quot;wrap_content&quot;
+        android:layout_height=&quot;wrap_content&quot; /&gt;
+
+    &lt;TextView
+        android:layout_width=&quot;wrap_content&quot;
+        android:layout_height=&quot;wrap_content&quot;
+        android:textStyle=&quot;bold&quot;
+        android:text=&quot;sparse[index]:&quot; /&gt;
+    &lt;TextView
+        android:text=&quot;@{sparse[index]}&quot;
+        android:layout_width=&quot;wrap_content&quot;
+        android:layout_height=&quot;wrap_content&quot; /&gt;
+
+    &lt;TextView
+        android:layout_width=&quot;wrap_content&quot;
+        android:layout_height=&quot;wrap_content&quot;
+        android:textStyle=&quot;bold&quot;
+        android:text=&quot;map[key]:&quot; /&gt;
+    &lt;TextView
+        android:text=&quot;@{map[key]}&quot;
+        android:layout_width=&quot;wrap_content&quot;
+        android:layout_height=&quot;wrap_content&quot; /&gt;
+
+    &lt;View
+        android:layout_marginTop=&quot;10dp&quot;
+        android:layout_marginBottom=&quot;10dp&quot;
+        android:layout_width=&quot;match_parent&quot;
+        android:layout_height=&quot;1dp&quot;
+        android:background=&quot;@android:color/black&quot; /&gt;
+
+    &lt;TextView
+        android:text=&apos;map[&quot;firstName&quot;]&apos;
+        android:textStyle=&quot;bold&quot;
+        android:layout_width=&quot;wrap_content&quot;
+        android:layout_height=&quot;wrap_content&quot; /&gt;
+    &lt;TextView
+        android:text=&apos;@{map[&quot;firstName&quot;]}&apos;
+        android:layout_width=&quot;wrap_content&quot;
+        android:layout_height=&quot;wrap_content&quot; /&gt;
+
+    &lt;TextView
+        android:text=&quot;map[`firstName`]&quot;
+        android:textStyle=&quot;bold&quot;
+        android:layout_width=&quot;wrap_content&quot;
+        android:layout_height=&quot;wrap_content&quot; /&gt;
+    &lt;TextView
+        android:text=&quot;@{map[`firstName`]}&quot;
+        android:layout_width=&quot;wrap_content&quot;
+        android:layout_height=&quot;wrap_content&quot; /&gt;
+
+    &lt;TextView
+        android:text=&quot;map[&amp;amp;quot;firstName&amp;amp;quot;]&quot;
+        android:textStyle=&quot;bold&quot;
+        android:layout_width=&quot;wrap_content&quot;
+        android:layout_height=&quot;wrap_content&quot; /&gt;
+    &lt;TextView
+        android:text=&quot;@{map[&amp;quot;firstName&amp;quot;]}&quot;
+        android:layout_width=&quot;wrap_content&quot;
+        android:layout_height=&quot;wrap_content&quot; /&gt;
+
+&lt;/LinearLayout&gt;
+</code></pre><h4 id="本地资源的引用："><a href="#本地资源的引用：" class="headerlink" title="本地资源的引用："></a>本地资源的引用：</h4><pre><code>&lt;data class=&quot;ResourceBinding&quot;&gt;
+    &lt;variable name=&quot;large&quot; type=&quot;boolean&quot; /&gt;
+    &lt;variable name=&quot;firstName&quot; type=&quot;String&quot; /&gt;
+    &lt;variable name=&quot;lastName&quot; type=&quot;String&quot; /&gt;
+    &lt;variable name=&quot;bananaCount&quot; type=&quot;int&quot; /&gt;
+    &lt;variable name=&quot;orangeCount&quot; type=&quot;int&quot; /&gt;
+&lt;/data&gt;
+
+&lt;LinearLayout
+    android:orientation=&quot;vertical&quot;
+    android:layout_width=&quot;match_parent&quot;
+    android:layout_height=&quot;match_parent&quot;&gt;
+
+    &lt;TextView
+        android:padding=&quot;@{large? (int)@dimen/largePadding : (int)@dimen/smallPadding}&quot;
+        android:background=&quot;@android:color/black&quot;
+        android:textColor=&quot;@android:color/white&quot;
+        android:layout_width=&quot;wrap_content&quot;
+        android:layout_height=&quot;wrap_content&quot;
+        android:text=&quot;@string/hello_world&quot; /&gt;
+
+    &lt;TextView
+        android:text=&quot;@{@string/nameFormat(firstName, lastName)}&quot;
+        android:layout_width=&quot;wrap_content&quot;
+        android:layout_height=&quot;wrap_content&quot; /&gt;
+
+    &lt;TextView
+        android:text=&quot;@{@plurals/banana(bananaCount)}&quot;
+        android:layout_width=&quot;wrap_content&quot;
+        android:layout_height=&quot;wrap_content&quot; /&gt;
+
+    &lt;TextView
+        android:text=&quot;@{@plurals/orange(orangeCount, orangeCount)}&quot;
+        android:layout_width=&quot;wrap_content&quot;
+        android:layout_height=&quot;wrap_content&quot; /&gt;
+&lt;/LinearLayout&gt;
+
+//string.xml文件内容
+ &lt;string name=&quot;nameFormat&quot;&gt;Full Name: %1$s:%2$s&lt;/string&gt;
+&lt;string name=&quot;nameFormatWithAge&quot;&gt;Hello %1$s %2$s, %3$d ages&lt;/string&gt;
+
+
+&lt;plurals name=&quot;banana&quot;&gt;
+    &lt;item quantity=&quot;zero&quot;&gt;zero bananas&lt;/item&gt;
+    &lt;item quantity=&quot;one&quot;&gt;one banana&lt;/item&gt;
+    &lt;item quantity=&quot;two&quot;&gt;two bananas&lt;/item&gt;
+    &lt;item quantity=&quot;few&quot;&gt;few bananas&lt;/item&gt;
+    &lt;item quantity=&quot;many&quot;&gt;many bananas&lt;/item&gt;
+    &lt;item quantity=&quot;other&quot;&gt;other bananas&lt;/item&gt;
+&lt;/plurals&gt;
+
+&lt;plurals name=&quot;orange&quot;&gt;
+    &lt;item quantity=&quot;one&quot;&gt;Have an orange&lt;/item&gt;
+    &lt;item quantity=&quot;other&quot;&gt;Have %d oranges&lt;/item&gt;
+&lt;/plurals&gt;
+</code></pre><h4 id="ViewStub："><a href="#ViewStub：" class="headerlink" title="ViewStub："></a>ViewStub：</h4><pre><code>&lt;layout xmlns:android=&quot;http://schemas.android.com/apk/res/android&quot;&gt;
+
+    &lt;LinearLayout
+        android:orientation=&quot;horizontal&quot;
+        android:layout_width=&quot;match_parent&quot;
+        android:layout_height=&quot;match_parent&quot;
+        android:paddingBottom=&quot;@dimen/activity_vertical_margin&quot;
+        android:paddingLeft=&quot;@dimen/activity_horizontal_margin&quot;
+        android:paddingRight=&quot;@dimen/activity_horizontal_margin&quot;
+        android:paddingTop=&quot;@dimen/activity_vertical_margin&quot; &gt;
+
+        &lt;Button
+            android:text=&quot;Inflate the ViewStub&quot;
+            android:onClick=&quot;inflateViewStub&quot;
+            android:layout_width=&quot;wrap_content&quot;
+            android:layout_height=&quot;wrap_content&quot; /&gt;
+
+        &lt;ViewStub
+            android:id=&quot;@+id/view_stub&quot;
+            android:layout=&quot;@layout/view_stub&quot;
+            android:layout_width=&quot;match_parent&quot;
+            android:layout_height=&quot;wrap_content&quot; /&gt;
+
+    &lt;/LinearLayout&gt;
+&lt;/layout&gt;
+
+@Override
+protected void onCreate(Bundle savedInstanceState) {
+    super.onCreate(savedInstanceState);
+
+    mBinding = DataBindingUtil.setContentView(this, R.layout.activity_view_stub);
+    mBinding.viewStub.setOnInflateListener(new ViewStub.OnInflateListener() {
+        @Override
+        public void onInflate(ViewStub stub, View inflated) {
+            ViewStubBinding binding = DataBindingUtil.bind(inflated);
+            User user = new User(&quot;liang&quot;, &quot;fei&quot;);
+            binding.setUser(user);
+        }
+    });
+
+}
+
+
+public void inflateViewStub(View view) {
+    if (!mBinding.viewStub.isInflated()) {
+        mBinding.viewStub.getViewStub().inflate();
+    }
+}
+</code></pre><h4 id="动态更新数据-参考博客-CSDN-博客"><a href="#动态更新数据-参考博客-CSDN-博客" class="headerlink" title="动态更新数据,参考博客 CSDN 博客"></a>动态更新数据,参考博客 <a href="http://blog.csdn.net/zhaizu/article/details/51491455" target="_blank" rel="external">CSDN 博客</a></h4>
+      
+    </div>
+
+  </div>
+
+  <div class="article-footer">
+    <div class="article-meta pull-left">
+
+    
+      
+
+    <span class="post-categories">
+      <i class="icon-categories"></i>
+        <a href="/categories/android/">android</a>
+    </span>
+    
+
+    
+    
+
+    <span class="post-tags">
+      <i class="icon-tags"></i>
+        <a href="/tags/DataBinding/">DataBinding</a><a href="/tags/安卓/">安卓</a>
+    </span>
+    
+
+    </div>
+
+	<!-- 第三方评论 -->
+    
+  </div>
+</article>
+
+  
+	<div id="comment">
+		
+		
+	<div id="SOHUCS" sid="http://www.itkimi.com/2017/11/09/android-databing/" ></div> 
+	<script type="text/javascript"> 
+	(function(){ 
+	var appid = 'cyt6iEBkx'; 
+	var conf = 'prod_46bee0d54fc91810c69f29fcca034697'; 
+	var width = window.innerWidth || document.documentElement.clientWidth; 
+	if (width < 960) { 
+	window.document.write('<script id="changyan_mobile_js" charset="utf-8" type="text/javascript" src="http://changyan.sohu.com/upload/mobile/wap-js/changyan_mobile.js?client_id=' + appid + '&conf=' + conf + '"><\/script>'); } else { var loadJs=function(d,a){var c=document.getElementsByTagName("head")[0]||document.head||document.documentElement;var b=document.createElement("script");b.setAttribute("type","text/javascript");b.setAttribute("charset","UTF-8");b.setAttribute("src",d);if(typeof a==="function"){if(window.attachEvent){b.onreadystatechange=function(){var e=b.readyState;if(e==="loaded"||e==="complete"){b.onreadystatechange=null;a()}}}else{b.onload=a}}c.appendChild(b)};loadJs("http://changyan.sohu.com/upload/changyan.js",function(){window.changyan.api.config({appid:appid,conf:conf})}); } })(); </script>
+		
+		
+	<!--
+	
+	 <div class="ds-thread" data-thread-key="/2017/11/09/android-databing/" data-title="Android DataBinding语法规范" data-url="http://www.itkimi.com/2017/11/09/android-databing/"></div>
+	
+	-->
+	</div>
+
+
+
+
+    </main>
+
+    <footer class="site-footer">
+ 
+  <div>
+	 <a class="bshareDiv" href="http://www.bshare.cn/share">分享按钮</a><script type="text/javascript" charset="utf-8" src="http://static.bshare.cn/b/buttonLite.js#uuid=&amp;style=5&amp;fs=4&amp;bgcolor=Purple"></script>
+  </div>
+  
+  <div>
+	<script type="text/javascript">var cnzz_protocol = (("https:" == document.location.protocol) ? " https://" : " http://");document.write(unescape("%3Cspan id='cnzz_stat_icon_1262826986'%3E%3C/span%3E%3Cscript src='" + cnzz_protocol + "s19.cnzz.com/stat.php%3Fid%3D1262826986%26online%3D1%26show%3Dline' type='text/javascript'%3E%3C/script%3E"));</script>
+  </div>
+
+  <p class="site-info">
+    本站由 <a href="https://hexo.io/" target="_blank">Hexo</a> 
+    技术驱动，主题采用 <a href="https://github.com/CodeDaraW/Hacker" target="_blank">Hacker</a>
+    </br>
+    
+    &copy; 2017 kimi
+    
+	</br>
+	豫ICP证: <a href="http://www.miitbeian.gov.cn/" target="_blank">17020696</a> 号
+  </p>
+</footer>
+    
+  </div>
+</div>
+</body>
+</html>
