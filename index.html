@@ -110,19 +110,7 @@
   <div class="article-content">
     <div class="entry">
       
-        <h4 id="Android-DataBinding语法规范"><a href="#Android-DataBinding语法规范" class="headerlink" title="Android DataBinding语法规范"></a>Android DataBinding语法规范</h4><h4 id="基本用法："><a href="#基本用法：" class="headerlink" title="基本用法："></a>基本用法：</h4><pre><code>&lt;layout xmlns:android=&quot;http://schemas.android.com/apk/res/android&quot;
-    xmlns:app=&quot;http://schemas.android.com/apk/res-auto&quot;&gt;
-    //class属性定义了DataBinding的类型，如果使用了class属性，则不在根据layout名称生成相应DataBinding了
-    &lt;data class=&quot;.ContractBinding&quot;&gt; 
-        //import标签导包，alias 表示别名
-        &lt;import type=&quot;com.liangfeizc.databinding.model.User&quot;/&gt;
-        &lt;import type=&quot;com.liangfeizc.databinding.utils.MyStringUtils&quot; alias=&quot;StringUtils&quot; /&gt;
-        &lt;import type=&quot;android.view.View&quot; /&gt;
-
-        &lt;variable name=&quot;user&quot; type=&quot;User&quot; /&gt;
-    &lt;/data&gt;
-&lt;/layout&gt;
-</code></pre>
+        <h4 id="Android-DataBinding语法规范"><a href="#Android-DataBinding语法规范" class="headerlink" title="Android DataBinding语法规范"></a>Android DataBinding语法规范</h4><h4 id="基本用法："><a href="#基本用法：" class="headerlink" title="基本用法："></a>基本用法：</h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div></pre></td><td class="code"><pre><div class="line">&lt;layout xmlns:android=&quot;http://schemas.android.com/apk/res/android&quot;</div><div class="line">    xmlns:app=&quot;http://schemas.android.com/apk/res-auto&quot;&gt;</div><div class="line">    //class属性定义了DataBinding的类型，如果使用了class属性，则不在根据layout名称生成相应DataBinding了</div><div class="line">    &lt;data class=&quot;.ContractBinding&quot;&gt; </div><div class="line">	    //import标签导包，alias 表示别名</div><div class="line">        &lt;import type=&quot;com.liangfeizc.databinding.model.User&quot;/&gt;</div><div class="line">        &lt;import type=&quot;com.liangfeizc.databinding.utils.MyStringUtils&quot; alias=&quot;StringUtils&quot; /&gt;</div><div class="line">        &lt;import type=&quot;android.view.View&quot; /&gt;</div><div class="line"></div><div class="line">        &lt;variable name=&quot;user&quot; type=&quot;User&quot; /&gt;</div><div class="line">    &lt;/data&gt;</div><div class="line">&lt;/layout&gt;</div></pre></td></tr></table></figure>
       
     </div>
 
@@ -354,7 +342,7 @@
 
     <span class="post-tags">
       <i class="icon-tags"></i>
-        <a href="/tags/安卓/">安卓</a><a href="/tags/动画/">动画</a><a href="/tags/传感器/">传感器</a>
+        <a href="/tags/动画/">动画</a><a href="/tags/安卓/">安卓</a><a href="/tags/传感器/">传感器</a>
     </span>
     
 
@@ -519,76 +507,6 @@
   <article>
   
     
-    <h3 class="article-title"><a href="/2017/07/07/ssm/index.html"><span>SpringMVC_Spring_Mybits框架整合记录</span></a></h3>
-    
-  
-
-  <!--
-  <div class="article-top-meta">
-    <span class="posted-on">
-      <a href="/2017/07/07/ssm/" rel="bookmark">
-        <time class="entry-date published" datetime="2017-07-07T07:10:04.000Z">
-          2017-07-07
-        </time>
-      </a>
-    </span>
-  </div>
-  -->
-
-  
-
-  <div class="article-content">
-    <div class="entry">
-      
-        <p>之前学习了Struts2，Hibernate，Spring等框架的基本知识以及它们之间的整合，接下来过渡到了SpringMVC，Mybits，Spring了，总体感觉后者更加方便更加好用，在此简单记录下SSM框架的整合过程。</p>
-<h3 id="SpringMVC介绍："><a href="#SpringMVC介绍：" class="headerlink" title="SpringMVC介绍："></a>SpringMVC介绍：</h3><p>SpringMVC是一个视图层框架，和Struts2框架的功能一致，都是直接负责和客户交互的。还记得Spring框架的6大核心功能吗，它们分别是IOC容器，JDBC，ORM，WEB，AOP，以及SpringEE，其中SpringMVC就属于WEB模块中。</p>
-      
-    </div>
-
-  </div>
-
-  <div class="article-footer">
-    <div class="article-meta pull-left">
-
-    
-      
-
-    <span class="post-categories">
-      <i class="icon-categories"></i>
-        <a href="/categories/JavaWeb/">JavaWeb</a>
-    </span>
-    
-
-    
-    
-
-    <span class="post-tags">
-      <i class="icon-tags"></i>
-        <a href="/tags/SSH/">SSH</a><a href="/tags/Struts2/">Struts2</a><a href="/tags/Spring/">Spring</a><a href="/tags/Hibernate/">Hibernate</a>
-    </span>
-    
-
-    </div>
-
-	<!-- 第三方评论 -->
-    
-    <div class="article-meta pull-right">
-      <span>
-        <i class="icon-comments"></i>
-        <span>
-          <a href="/2017/07/07/ssm/#comment">评论</a>
-        </span>
-      </span>
-    </div>
-    
-  </div>
-</article>
-
-
-
-  <article>
-  
-    
     <h3 class="article-title"><a href="/2017/07/07/ssh/index.html"><span>Struts2,Hibernate,Spring框架学习总结</span></a></h3>
     
   
@@ -648,6 +566,76 @@
         <i class="icon-comments"></i>
         <span>
           <a href="/2017/07/07/ssh/#comment">评论</a>
+        </span>
+      </span>
+    </div>
+    
+  </div>
+</article>
+
+
+
+  <article>
+  
+    
+    <h3 class="article-title"><a href="/2017/07/07/ssm/index.html"><span>SpringMVC_Spring_Mybits框架整合记录</span></a></h3>
+    
+  
+
+  <!--
+  <div class="article-top-meta">
+    <span class="posted-on">
+      <a href="/2017/07/07/ssm/" rel="bookmark">
+        <time class="entry-date published" datetime="2017-07-07T07:10:04.000Z">
+          2017-07-07
+        </time>
+      </a>
+    </span>
+  </div>
+  -->
+
+  
+
+  <div class="article-content">
+    <div class="entry">
+      
+        <p>之前学习了Struts2，Hibernate，Spring等框架的基本知识以及它们之间的整合，接下来过渡到了SpringMVC，Mybits，Spring了，总体感觉后者更加方便更加好用，在此简单记录下SSM框架的整合过程。</p>
+<h3 id="SpringMVC介绍："><a href="#SpringMVC介绍：" class="headerlink" title="SpringMVC介绍："></a>SpringMVC介绍：</h3><p>SpringMVC是一个视图层框架，和Struts2框架的功能一致，都是直接负责和客户交互的。还记得Spring框架的6大核心功能吗，它们分别是IOC容器，JDBC，ORM，WEB，AOP，以及SpringEE，其中SpringMVC就属于WEB模块中。</p>
+      
+    </div>
+
+  </div>
+
+  <div class="article-footer">
+    <div class="article-meta pull-left">
+
+    
+      
+
+    <span class="post-categories">
+      <i class="icon-categories"></i>
+        <a href="/categories/JavaWeb/">JavaWeb</a>
+    </span>
+    
+
+    
+    
+
+    <span class="post-tags">
+      <i class="icon-tags"></i>
+        <a href="/tags/SSH/">SSH</a><a href="/tags/Struts2/">Struts2</a><a href="/tags/Spring/">Spring</a><a href="/tags/Hibernate/">Hibernate</a>
+    </span>
+    
+
+    </div>
+
+	<!-- 第三方评论 -->
+    
+    <div class="article-meta pull-right">
+      <span>
+        <i class="icon-comments"></i>
+        <span>
+          <a href="/2017/07/07/ssm/#comment">评论</a>
         </span>
       </span>
     </div>
